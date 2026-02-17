@@ -27,13 +27,12 @@ const CommonSelect = <T extends string>({
   w = 200,
   onValueChange,
   className,
-  arrow,
 }: SelectProps<T>) => {
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger
         style={{ minWidth: w }}
-        className={` ${className} bg-[#FCFCFC] border border-[#A78BFA]/20 px-3 py-6 cursor-pointer rounded-md outline-none text-sm `}
+        className={` ${className} bg-[#FCFCFC] border border-[#A78BFA]/20 px-3 py-5 cursor-pointer rounded-md outline-none text-sm `}
       >
         <SelectValue placeholder="Select an option" />
         {/* <ChevronDown className={`w-4 h-4 ml-auto ${arrow}`} /> */}

@@ -1,5 +1,10 @@
-import { Clock, Edit2, Plus, Search, Trash2 } from "lucide-react";
+import ActionButton from "@/common/button/ActionButton";
+import CommonButton from "@/common/button/CommonButton";
+import TabButton from "@/common/custom/TabButton";
+import CommonHeader from "@/common/header/CommonHeader";
+import { Clock, Edit2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import UserSearchBar from "../userManagement/UserSearchBar";
 type ContentType = "safety" | "sessions" | "research";
 
 const bfrSessions = [
@@ -14,6 +19,28 @@ const bfrSessions = [
     safetyInfo:
       "Consult a healthcare professional before starting BFR training.",
   },
+  {
+    id: "2",
+    title: "Lower Body Strength BFR",
+    category: "Strength",
+    bodyType: "Lower",
+    time: "25 min",
+    exercise: "05",
+    shortDescription: "For quads, hamstrings, glutes with controlled pressure.",
+    safetyInfo:
+      "Ensure proper band placement and monitor circulation throughout.",
+  },
+  {
+    id: "3",
+    title: "Full Body Endurance BFR",
+    category: "Endurance",
+    bodyType: "Full Body",
+    time: "30 min",
+    exercise: "08",
+    shortDescription: "Complete workout targeting all major muscle groups.",
+    safetyInfo:
+      "Start with lighter resistance and gradually increase intensity.",
+  },
 ];
 const researchEducation = [
   {
@@ -21,11 +48,33 @@ const researchEducation = [
     title: "What is Blood Flow Restriction Training?",
     category: "Basic",
     shortDescription:
-      "An introduction to BFR training, how it works, and why it& apos effective for building muscle with lighter loads.",
+      "An introduction to BFR training, how it works, and why it's effective for building muscle with lighter loads.",
     safetyInfo:
       "Consult a healthcare professional before starting BFR training.",
     content:
       "Blood Flow Restriction (BFR) training involves applying pressure to the limbs to partially restrict venous blood flow while maintaining arterial flow during exercise.",
+  },
+  {
+    id: "2",
+    title: "Science Behind BFR: Mechanisms and Benefits",
+    category: "Advanced",
+    shortDescription:
+      "Explore the physiological mechanisms that make BFR effective, including metabolic stress and muscle fiber recruitment.",
+    safetyInfo:
+      "Understanding the science helps ensure safe and effective application.",
+    content:
+      "BFR training triggers muscle hypertrophy through increased metabolic stress, cell swelling, and enhanced growth hormone production, all while using significantly lighter loads than traditional resistance training.",
+  },
+  {
+    id: "3",
+    title: "Safety Guidelines and Contraindications",
+    category: "Safety",
+    shortDescription:
+      "Essential safety protocols, proper pressure levels, and who should avoid BFR training.",
+    safetyInfo:
+      "Always follow proper protocols and seek medical clearance if you have any health concerns.",
+    content:
+      "BFR training requires careful attention to pressure levels (typically 40-80% arterial occlusion), session duration, and individual health status. Contraindications include history of blood clots, cardiovascular disease, and certain medications.",
   },
 ];
 
@@ -40,187 +89,187 @@ const safetyDisclaimers = [
     content:
       "Consult a healthcare professional before starting BFR training. Do not use if you have cardiovascular conditions, blood clotting disorders, or varicose veins.",
   },
+  {
+    id: "2",
+    title: "Medical Clearance Required",
+    description:
+      "Before beginning any BFR training program, individuals must obtain proper medical clearance, especially those with pre-existing health conditions. BFR training affects cardiovascular and circulatory systems and requires careful monitoring.",
+    content:
+      "Seek immediate medical attention if you experience excessive pain, numbness, skin discoloration, or prolonged swelling. Stop training immediately if you feel dizzy, nauseous, or experience chest pain.",
+  },
+  {
+    id: "3",
+    title: "Proper Equipment and Technique",
+    description:
+      "Using appropriate BFR equipment and following correct application techniques is crucial for safety and effectiveness. Improper use can lead to injury, nerve damage, or other serious complications.",
+    content:
+      "Always use properly calibrated BFR cuffs or bands designed specifically for restriction training. Never use tourniquets, rubber bands, or improvised materials. Ensure proper pressure levels (40-80% arterial occlusion) and never exceed recommended session durations of 15-20 minutes per limb.",
+  },
 ];
-const BFR = () => {
+interface AddBFRSessionModalProps {
+  setShowAddModal: (show: boolean) => void;
+}
+const BFR: React.FC<AddBFRSessionModalProps> = ({ setShowAddModal }) => {
   const [activeContentType, setActiveContentType] =
     useState<ContentType>("safety");
-  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div>
       <>
-        {/* Sub-tabs for BFR */}
-        <div className="flex gap-3 mb-6">
-          <button
-            onClick={() => setActiveContentType("safety")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeContentType === "safety"
-                ? "bg-purple-500 text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Safety Disclaimer
-          </button>
-          <button
-            onClick={() => setActiveContentType("sessions")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeContentType === "sessions"
-                ? "bg-purple-500 text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            BFR Sessions
-          </button>
-          <button
-            onClick={() => setActiveContentType("research")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeContentType === "research"
-                ? "bg-purple-500 text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Research & Educations
-          </button>
-        </div>
-
-        {/* Search and Add Button */}
-        <div className="flex gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={20}
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+          <div className="flex flex-wrap  gap-3 ">
+            <TabButton
+              label="Safety Disclaimer"
+              value="safety"
+              activeValue={activeContentType}
+              onChange={setActiveContentType}
             />
-            <input
-              type="text"
-              placeholder="Search by job title or requester..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <TabButton
+              label="BFR Sessions"
+              value="sessions"
+              activeValue={activeContentType}
+              onChange={setActiveContentType}
+            />
+
+            <TabButton
+              label="Research & Educations"
+              value="research"
+              activeValue={activeContentType}
+              onChange={setActiveContentType}
             />
           </div>
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option>categories</option>
-          </select>
-          <button
-            // onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 font-medium"
-          >
-            <Plus size={20} />
-            Add Content
-          </button>
+          <CommonButton onClick={() => setShowAddModal(true)}>
+            <Plus size={16} /> Add Content
+          </CommonButton>
         </div>
+        <UserSearchBar />
 
-        {/* Content Cards */}
-        {activeContentType === "safety" && (
-          <div className="space-y-4">
-            {safetyDisclaimers.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-lg border border-gray-200 p-6"
-              >
-                <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-700 mb-4">{item.description}</p>
-                <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <p className="font-semibold mb-2">
-                    A IMPORTANT SAFETY INFORMATION:
-                  </p>
-                  <ul className="list-disc pl-5 text-sm text-gray-700">
-                    <li>{item.content}</li>
-                  </ul>
-                </div>
-                <div className="flex gap-2">
-                  <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    <Edit2 size={16} />
-                    Edit
-                  </button>
-                  <button className="flex items-center gap-2 bg-white text-red-500 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-50">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="pt-6">
+          {activeContentType === "safety" && (
+            <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-4 ">
+              {safetyDisclaimers.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg border border-gray-200 p-6"
+                >
+                  <CommonHeader size="md" className="!font-bold !text-black">
+                    {item.title}
+                  </CommonHeader>
+                  <CommonHeader size="sm" className="">
+                    {item.description}
+                  </CommonHeader>
 
-        {activeContentType === "sessions" && (
-          <div className="space-y-4">
-            {bfrSessions.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-lg border border-gray-200 p-6"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                    <span className="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full">
+                  <div className=" p-4 rounded-lg mb-4">
+                    <CommonHeader size="md" className="!font-bold !text-black">
+                      A IMPORTANT SAFETY INFORMATION:
+                    </CommonHeader>
+
+                    <ul className="list-disc pl-5 text-sm text-gray-700">
+                      <li>{item.content}</li>
+                    </ul>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <ActionButton variant="edit">
+                      <Edit2 size={16} />
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="delete">
+                      <Trash2 size={16} />
+                    </ActionButton>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeContentType === "sessions" && (
+            <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-4">
+              {bfrSessions.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg border border-gray-200 p-6"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <CommonHeader
+                        size="md"
+                        className="!font-bold !text-black"
+                      >
+                        {item.title}
+                      </CommonHeader>
+                    </div>{" "}
+                    <span className="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full ">
                       {item.category}
                     </span>
                   </div>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-600 mb-4">
-                  <span className="flex items-center gap-1">
-                    <span className="font-semibold">Upper</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock size={16} />
-                    {item.time}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="font-semibold">
-                      {item.exercise} exercises
+                  <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                    <span className="flex items-center gap-1">
+                      <span className="font-semibold">Upper</span>
                     </span>
-                  </span>
+                    <span className="flex items-center gap-1">
+                      <Clock size={16} />
+                      {item.time}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="font-semibold">
+                        {item.exercise} exercises
+                      </span>
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-4">
+                    {item.shortDescription}
+                  </p>
+                  <div className="flex gap-2">
+                    <ActionButton variant="edit">
+                      <Edit2 size={16} />
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="delete">
+                      <Trash2 size={16} />
+                    </ActionButton>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-700 mb-4">
-                  {item.shortDescription}
-                </p>
-                <div className="flex gap-2">
-                  <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    <Edit2 size={16} />
-                    Edit
-                  </button>
-                  <button className="flex items-center gap-2 bg-white text-red-500 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-50">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
-        {activeContentType === "research" && (
-          <div className="grid grid-cols-3 gap-4">
-            {researchEducation.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-lg border border-gray-200 p-6"
-              >
-                <div className="mb-3">
-                  <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                  <span className="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full">
-                    {item.category}
-                  </span>
+          {activeContentType === "research" && (
+            <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-4">
+              {researchEducation.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-lg border border-gray-200 p-6"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <CommonHeader size="md" className="!font-bold !text-black">
+                      {item.title}
+                    </CommonHeader>
+                    <span className="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full ">
+                      {item.category}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-4">
+                    {item.shortDescription}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {item.content ||
+                      "Blood Flow Restriction (BFR) training involves applying pressure to the limbs to partially restrict venous blood flow while maintaining arterial flow during exercise."}
+                  </p>
+                  <div className="flex gap-2">
+                    <ActionButton variant="edit">
+                      <Edit2 size={16} />
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="delete">
+                      <Trash2 size={16} />
+                    </ActionButton>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-700 mb-4">
-                  {item.shortDescription}
-                </p>
-                <p className="text-sm text-gray-600 mb-4">
-                  {item.content ||
-                    "Blood Flow Restriction (BFR) training involves applying pressure to the limbs to partially restrict venous blood flow while maintaining arterial flow during exercise."}
-                </p>
-                <div className="flex gap-2">
-                  <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    <Edit2 size={16} />
-                    Edit
-                  </button>
-                  <button className="flex items-center gap-2 bg-white text-red-500 border border-red-300 px-4 py-2 rounded-lg hover:bg-red-50">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </>
     </div>
   );

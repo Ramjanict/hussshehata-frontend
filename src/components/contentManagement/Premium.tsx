@@ -1,5 +1,24 @@
-import { ChevronDown, ChevronRight, Edit2, Trash2 } from "lucide-react";
-const premiumPrograms = [
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import ProgramCard from "../reuseable/ProgramCard";
+import WeekCard from "../reuseable/WeekCard";
+
+interface WeekConfig {
+  week: number;
+  isPremium: boolean;
+}
+
+export interface Program {
+  id: string;
+  title: string;
+  category: string;
+  position: number;
+  expanded: boolean;
+  lockAll: boolean;
+  weekConfig: WeekConfig[];
+}
+
+const initialPrograms: Program[] = [
   {
     id: "1",
     title: "10-Week Monster Confusion (Modernized)",
@@ -57,112 +76,118 @@ const premiumPrograms = [
     })),
   },
 ];
+
 const Premium = () => {
+  const [premiumPrograms, setPremiumPrograms] =
+    useState<Program[]>(initialPrograms);
+
+  const toggleProgramExpanded = (id: string) => {
+    setPremiumPrograms((prevPrograms) =>
+      prevPrograms.map((program) =>
+        program.id === id
+          ? { ...program, expanded: !program.expanded }
+          : program,
+      ),
+    );
+  };
+
+  const toggleLockAll = (id: string) => {
+    setPremiumPrograms((prevPrograms) =>
+      prevPrograms.map((program) => {
+        if (program.id === id) {
+          const newLockAll = !program.lockAll;
+          return {
+            ...program,
+            lockAll: newLockAll,
+            weekConfig: program.weekConfig.map((week) => ({
+              ...week,
+              isPremium: newLockAll,
+            })),
+          };
+        }
+        return program;
+      }),
+    );
+  };
+
+  const toggleWeekPremium = (id: string, week: number) => {
+    setPremiumPrograms((prevPrograms) =>
+      prevPrograms.map((program) => {
+        if (program.id === id) {
+          const newWeekConfig = program.weekConfig.map((w) =>
+            w.week === week ? { ...w, isPremium: !w.isPremium } : w,
+          );
+          // Check if all weeks are premium to update lockAll
+          const allPremium = newWeekConfig.every((w) => w.isPremium);
+          return {
+            ...program,
+            weekConfig: newWeekConfig,
+            lockAll: allPremium,
+          };
+        }
+        return program;
+      }),
+    );
+  };
+
+  const handleSaveConfiguration = (id: string) => {
+    const program = premiumPrograms.find((p) => p.id === id);
+    if (program) {
+      console.log("Saving configuration for:", program.title);
+      console.log("Week Config:", program.weekConfig);
+      // Here you can add your API call to save the configuration
+      // Example:
+      // await saveWeekConfiguration(id, program.weekConfig);
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    console.log("Editing program:", id);
+    // Add your edit logic here
+  };
+
+  const handleDelete = (id: string) => {
+    console.log("Deleting program:", id);
+    // Add your delete logic here
+    // setPremiumPrograms(prevPrograms => prevPrograms.filter(p => p.id !== id));
+  };
+
   return (
     <div>
       <div className="space-y-4">
         {premiumPrograms.map((program) => (
           <div
+            className="bg-white rounded-lg border border-[#E7E8EB] p-4 sm:p-6"
             key={program.id}
-            className="bg-white rounded-lg border border-gray-200"
           >
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <button
-                    // onClick={() => toggleProgramExpanded(program.id)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    {program.expanded ? (
-                      <ChevronDown size={20} />
-                    ) : (
-                      <ChevronRight size={20} />
-                    )}
-                  </button>
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-bold">{program.title}</h3>
-                      <span
-                        className={`text-xs px-3 py-1 rounded-full ${
-                          program.category === "Advanced"
-                            ? "bg-red-100 text-red-700"
-                            : program.category === "Beginner"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-blue-100 text-blue-700"
-                        }`}
-                      >
-                        {program.category}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Position {program.position}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    <Edit2 size={16} />
-                    Edit
-                  </button>
-                  <button className="flex items-center gap-2 bg-white text-red-500 border border-red-300 px-3 py-2 rounded-lg hover:bg-red-50">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProgramCard
+              id={program.id}
+              title={program.title}
+              category={program.category}
+              position={program.position}
+              icon={
+                <button className="text-gray-400 hover:text-gray-600 cursor-pointer">
+                  {program.expanded ? (
+                    <ChevronDown size={20} />
+                  ) : (
+                    <ChevronRight size={20} />
+                  )}
+                </button>
+              }
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              iconAction={() => {
+                toggleProgramExpanded(program.id);
+              }}
+            />
 
             {program.expanded && (
-              <div className="border-t border-gray-200 p-6 bg-gray-50">
-                <div className="flex justify-between items-center mb-4">
-                  <h4 className="font-bold">Week-by-Week Lock Configuration</h4>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Lock All</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={program.lockAll}
-                        // onChange={() => toggleLockAll(program.id)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-5 gap-3">
-                  {program.weekConfig.map((week) => (
-                    <div
-                      key={week.week}
-                      className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
-                        week.isPremium
-                          ? "border-purple-300 bg-purple-50"
-                          : "border-gray-300 bg-white"
-                      }`}
-                      // onClick={() => toggleWeekPremium(program.id, week.week)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold">Week {week.week}</span>
-                        {week.isPremium && (
-                          <svg
-                            className="w-5 h-5 text-purple-600"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
-                          </svg>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">
-                        {week.isPremium ? "Premium" : "Free"}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <button className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-medium">
-                  Save Week Configuration
-                </button>
-              </div>
+              <WeekCard
+                program={program}
+                toggleWeekPremium={toggleWeekPremium}
+                toggleLockAll={toggleLockAll}
+                handleSaveConfiguration={handleSaveConfiguration}
+              />
             )}
           </div>
         ))}

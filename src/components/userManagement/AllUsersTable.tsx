@@ -1,5 +1,14 @@
 import { Crown, MoreVertical } from "lucide-react";
-
+import { tableDesign } from "../programManagement/ProgramAnalytics";
+const tableHeaders = [
+  { label: "Program Name", align: "text-left" },
+  { label: "Type", align: "text-left hidden md:table-cell" },
+  { label: "Status", align: "text-left hidden sm:table-cell" },
+  { label: "Subscription", align: "text-left" },
+  { label: "Registration", align: "text-left hidden lg:table-cell" },
+  { label: "Last Login", align: "text-left hidden lg:table-cell" },
+  { label: "Action", align: "text-left" },
+];
 export interface User {
   id: number | string;
   name: string;
@@ -51,53 +60,37 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
   return (
     <>
       <div className=" bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-blue-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Subscription
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Registration
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Last Login
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Action
-                </th>
+        <div className="block w-full overflow-x-auto">
+          <table className={tableDesign.table}>
+            <thead className={tableDesign.thead}>
+              <tr className={tableDesign.tr}>
+                {tableHeaders.map((header, index) => (
+                  <th
+                    key={index}
+                    className={` ${header.align} ${tableDesign.th}`}
+                  >
+                    {header.label}
+                  </th>
+                ))}
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-200">
+            <tbody className={tableDesign.tbody}>
               {users.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-6 py-8 text-center text-gray-500"
-                  >
+                <tr className={tableDesign.tr}>
+                  <td colSpan={7} className={`text-center ${tableDesign.td}`}>
                     {emptyMessage}
                   </td>
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
+                  <tr key={user.id} className={tableDesign.tr}>
+                    <td className={` ${tableDesign.td} `}>
                       <div className="flex items-center gap-3">
                         <img
                           src={user.avatar}
                           alt={user.name}
-                          className="w-10 h-10 rounded-full"
+                          className="w-10 h-10 rounded-full hidden sm:block"
                         />
                         <div>
                           <p className="text-sm font-medium text-gray-900">
@@ -108,9 +101,9 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
                       </div>
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className={` hidden md:table-cell ${tableDesign.td} `}>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                        className={`px-3 py-1 rounded-full text-xs font-medium hidden md:block ${getTypeColor(
                           user.type,
                         )}`}
                       >
@@ -118,7 +111,7 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
                       </span>
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className={` hidden sm:table-cell ${tableDesign.td} `}>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
                           user.status,
@@ -128,7 +121,7 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
                       </span>
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className={` ${tableDesign.td} `}>
                       <span
                         className={`text-sm flex items-center gap-1 ${
                           user.subscription === "Premium"
@@ -143,15 +136,15 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className={` ${tableDesign.td} hidden lg:table-cell `}>
                       {user.registration}
                     </td>
 
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className={` ${tableDesign.td} hidden lg:table-cell  `}>
                       {user.lastLogin}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className={` ${tableDesign.td} `}>
                       <button
                         className="text-gray-400 hover:text-gray-600 transition-colors"
                         onClick={() => onActionClick?.(user)}

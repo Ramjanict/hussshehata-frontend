@@ -8,7 +8,7 @@ const CommonSearch = () => {
         <input
           type="text"
           placeholder="search user"
-          className="w-full pl-12 p-4 bg-[#A78BFA]/12 rounded-lg text-sm outline-none "
+          className="w-full pl-12 p-3 bg-[#A78BFA]/12 rounded-lg text-sm outline-none "
         />
       </div>
     </div>

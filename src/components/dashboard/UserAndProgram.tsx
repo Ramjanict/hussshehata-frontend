@@ -1,3 +1,5 @@
+import SectionHeader from "@/common/button/SectionHeader";
+
 const programs = [
   {
     name: "10-Week Monster Confusion (Classic)",
@@ -16,8 +18,11 @@ const UserAndProgram = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="bg-white text-black rounded-2xl p-6">
-        <h3 className="text-xl font-bold mb-1">User Distribution</h3>
-        <p className="text-gray-500 text-sm mb-6">By subscription type</p>
+        <SectionHeader
+          title="User Distribution"
+          description="By subscription type"
+        />
+
         <div className="flex justify-center mb-6">
           <div className="relative w-48 h-48">
             <svg viewBox="0 0 100 100" className="transform -rotate-90">
@@ -96,10 +101,11 @@ const UserAndProgram = () => {
       </div>
 
       <div className="bg-white text-black rounded-2xl p-6 lg:col-span-2">
-        <h3 className="text-xl font-bold mb-1">Top Performing Programs</h3>
-        <p className="text-gray-500 text-sm mb-6">
-          By enrollments and completion rate
-        </p>
+        <SectionHeader
+          title="Top Performing Programs"
+          description="By enrollments and completion rate"
+        />
+
         <div className="space-y-4">
           {programs.map((program, index) => (
             <div key={index}>

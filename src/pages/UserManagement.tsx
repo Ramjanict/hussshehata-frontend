@@ -1,4 +1,5 @@
 import CommonCard from "@/common/CommonCard";
+import Pagination from "@/common/custom/Pagination";
 import DashboardTopSection from "@/common/DashboardTopSection";
 import AllClients from "@/components/userManagement/AllClients";
 import AllCoached from "@/components/userManagement/AllCoached";
@@ -119,6 +120,8 @@ const UserManagement = () => {
       {activeTab === "Coached Client" && <ClientAndCoached />}
 
       {activeTab === "Activity Tracking" && <Tracking />}
+
+      <Pagination totalPages={10} currentPage={1} onPageChange={() => {}} />
     </div>
   );
 };

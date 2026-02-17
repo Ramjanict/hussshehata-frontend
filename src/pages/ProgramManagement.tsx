@@ -1,16 +1,17 @@
 import CommonCard from "@/common/CommonCard";
 import DashboardTopSection from "@/common/DashboardTopSection";
-import CommonSearch from "@/components/CommonSearch";
 import AllProgram from "@/components/programManagement/AllProgram";
 import CreateProgramModal from "@/components/programManagement/modal/CreateProgramModal";
 import ShowExerciseModal from "@/components/programManagement/modal/showExerciseModal";
 import ShowMethodModal from "@/components/programManagement/modal/ShowMethodModal";
 import ProgramAnalytics from "@/components/programManagement/ProgramAnalytics";
 import Training from "@/components/programManagement/Training";
+import UserSearchBar from "@/components/userManagement/UserSearchBar";
 import { Clock, Crown, Dumbbell, Users } from "lucide-react";
 import { useState } from "react";
 import UserTabs from "./UserTabs";
-
+export const cardGrid =
+  "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ";
 const ProgramManagement = () => {
   const [activeTab, setActiveTab] = useState("All Programs");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -56,7 +57,7 @@ const ProgramManagement = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 space-y-6">
+    <div className="space-y-6">
       <DashboardTopSection
         title="Program Management"
         description="Create and manage comprehensive workout programs"
@@ -64,14 +65,14 @@ const ProgramManagement = () => {
         action={() => setShowCreateModal(true)}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
+      <div className={cardGrid}>
         {statsData.map((stat, index) => {
           return <CommonCard key={index} {...stat} />;
         })}
       </div>
 
       <UserTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-      <CommonSearch />
+      <UserSearchBar />
       {activeTab === "All Programs" && <AllProgram />}
       {activeTab === "Training Methods Library" && (
         <Training setShowMethodModal={setShowMethodModal} />

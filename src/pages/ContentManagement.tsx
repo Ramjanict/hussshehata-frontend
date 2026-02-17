@@ -6,13 +6,10 @@ import HomePageContent from "@/components/contentManagement/HomePageContent";
 import AddBFRSessionModal from "@/components/contentManagement/modal/AddBFRSessionModal";
 import AddExecutionNoteModal from "@/components/contentManagement/modal/AddExecutionNoteModal";
 import AddPartnerClinicModal from "@/components/contentManagement/modal/AddPartnerClinicModal";
-import AddResearchEducationModal from "@/components/contentManagement/modal/AddResearchEducationModal";
 import AddSupplementProductModal from "@/components/contentManagement/modal/AddSupplementProductModal";
 import Premium from "@/components/contentManagement/Premium";
 import React, { useState } from "react";
 import UserTabs from "./UserTabs";
-
-type ContentType = "safety" | "sessions" | "research";
 
 const tabs = [
   "Home Page Content",
@@ -21,10 +18,11 @@ const tabs = [
   "BFR Sessions Guidelines",
   "Essential Management",
 ];
+export type EssentialType = "health" | "supplements";
 const ContentManagement: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("Home Page Content");
-  const [activeContentType, setActiveContentType] =
-    useState<ContentType>("safety");
+  const [activeTab, setActiveTab] =
+    useState<(typeof tabs)[number]>("Home Page Content");
+
   const [activeEssentialType, setActiveEssentialType] =
     useState<EssentialType>("health");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -35,7 +33,6 @@ const ContentManagement: React.FC = () => {
         title="Content Management"
         description="Manage app content, premium features, and training notes"
       />
-      {/* Tabs */}
 
       <div className="w-full">
         <UserTabs
@@ -45,38 +42,45 @@ const ContentManagement: React.FC = () => {
         />
       </div>
 
-      <div className="p-6">
+      <div className="py-6">
         {activeTab === "Home Page Content" && <HomePageContent />}
         {activeTab === "Premium Lock Library" && <Premium />}
-        {activeTab === "Execution Notes" && <Execution />}
-        {activeTab === "BFR Sessions Guidelines" && <BFR />}
-        {activeTab === "Essential Management" && <Essential />}
+        {activeTab === "Execution Notes" && (
+          <Execution setShowAddModal={setShowAddModal} />
+        )}
+        {activeTab === "BFR Sessions Guidelines" && (
+          <BFR setShowAddModal={setShowAddModal} />
+        )}
+        {activeTab === "Essential Management" && (
+          <Essential
+            setShowAddModal={setShowAddModal}
+            setActiveEssentialType={setActiveEssentialType}
+            activeEssentialType={activeEssentialType}
+          />
+        )}
       </div>
 
-      {/* Modals */}
-      {showAddModal &&
-        activeTab === "bfr" &&
-        activeContentType === "sessions" && (
-          <AddBFRSessionModal onClose={() => setShowAddModal(false)} />
-        )}
-      {showAddModal && activeTab === "execution" && (
+      {showAddModal && activeTab === "BFR Sessions Guidelines" && (
+        <AddBFRSessionModal onClose={() => setShowAddModal(false)} />
+      )}
+      {showAddModal && activeTab === "Execution Notes" && (
         <AddExecutionNoteModal onClose={() => setShowAddModal(false)} />
       )}
       {showAddModal &&
-        activeTab === "essential" &&
+        activeTab === "Essential Management" &&
         activeEssentialType === "health" && (
           <AddPartnerClinicModal onClose={() => setShowAddModal(false)} />
         )}
       {showAddModal &&
-        activeTab === "essential" &&
+        activeTab === "Essential Management" &&
         activeEssentialType === "supplements" && (
           <AddSupplementProductModal onClose={() => setShowAddModal(false)} />
         )}
-      {showAddModal &&
+      {/* {showAddModal &&
         activeTab === "bfr" &&
         activeContentType === "research" && (
           <AddResearchEducationModal onClose={() => setShowAddModal(false)} />
-        )}
+        )} */}
     </div>
   );
 };

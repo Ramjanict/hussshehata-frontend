@@ -1,3 +1,5 @@
+import image from "@/assets/images/woman.png";
+import SectionHeader from "@/common/button/SectionHeader";
 const popularPrograms = [
   { name: "10-Week Monster Confusion (Classic)", users: 342, percentage: 46 },
   {
@@ -8,11 +10,12 @@ const popularPrograms = [
   { name: "HUSS 8-Week Beast", users: 189, percentage: 75 },
   { name: "2-2-2 Method", users: 189, percentage: 75 },
 ];
+
 const recentActivity = [
   {
     id: 1,
     userName: "Lisa Anderson",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     action: 'Completed "Monster Mass Builder - Week 3, Day 7"',
     time: "5 min ago",
     badge: "Active",
@@ -20,7 +23,7 @@ const recentActivity = [
   {
     id: 2,
     userName: "Mike Chen",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     action: 'Completed "Beginner Foundation - Week 1, Day 1"',
     time: "2 min ago",
     badge: "Active",
@@ -28,7 +31,7 @@ const recentActivity = [
   {
     id: 3,
     userName: "James Rodriguez",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     action: "Upgraded to Premium subscription",
     time: "7 min ago",
     badge: "Subscription",
@@ -36,7 +39,7 @@ const recentActivity = [
   {
     id: 4,
     userName: "James Rodriguez",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     action: "Upgraded to Premium subscription",
     time: "2 min ago",
     badge: "Subscription",
@@ -44,7 +47,7 @@ const recentActivity = [
   {
     id: 5,
     userName: "",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     action: 'Completed "Monster Mass Builder - Week 3, Day 2"',
     time: "2 min ago",
     badge: "Active",
@@ -55,28 +58,28 @@ const activeUsers = [
   {
     id: 1,
     name: "John Smith",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     streak: "10 day streak",
     workouts: 12,
   },
   {
     id: 2,
     name: "John Smith",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     streak: "10 day streak",
     workouts: 12,
   },
   {
     id: 3,
     name: "John Smith",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     streak: "10 day streak",
     workouts: 12,
   },
   {
     id: 4,
     name: "John Smith",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     streak: "10 day streak",
     workouts: 12,
   },
@@ -96,17 +99,16 @@ const Tracking = () => {
     <div className="space-y-6">
       {/* Recent User Activity */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Recent User Activity
-        </h3>
-        <p className="text-sm text-gray-600 mb-6">
-          Real-time user actions and workout completions
-        </p>
+        <SectionHeader
+          title="Recent User Activity"
+          description="Real-time user actions and workout completions"
+        />
+
         <div className="space-y-4">
           {recentActivity.map((activity) => (
             <div
               key={activity.id}
-              className="flex items-center justify-between"
+              className="flex flex-col md:flex-row md:items-center justify-between gap-2"
             >
               <div className="flex items-center gap-3">
                 <img
@@ -135,15 +137,14 @@ const Tracking = () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Most Active Users */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Most Active Users (This Week)
-          </h3>
-          <p className="text-sm text-gray-600 mb-6">
-            Latest user actions and events
-          </p>
+          <SectionHeader
+            title="Most Active Users (This Week)"
+            description="Latest user actions and events"
+          />
+
           <div className="space-y-4">
             {activeUsers.map((user) => (
               <div key={user.id} className="flex items-center justify-between">
@@ -173,12 +174,11 @@ const Tracking = () => {
 
         {/* Most Popular Programs */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Most Popular Programs (This Week)
-          </h3>
-          <p className="text-sm text-gray-600 mb-6">
-            By enrollments and completion rate
-          </p>
+          <SectionHeader
+            title="Most Popular Programs (This Week)"
+            description="By enrollments and completion rate"
+          />
+
           <div className="space-y-4">
             {popularPrograms.map((program, index) => (
               <div key={index}>

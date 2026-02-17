@@ -1,4 +1,6 @@
-import { X } from "lucide-react";
+import CloseButton from "@/common/button/CloseButton";
+import CommonButton from "@/common/button/CommonButton";
+import CommonHeader from "@/common/header/CommonHeader";
 
 const inputClass = {
   label: "block text-sm font-normal text-[#020617] font-inter mb-2",
@@ -17,15 +19,8 @@ const ShowMethodModal: React.FC<ShowMethodModalProps> = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Add New Training Method
-          </h2>
-          <button
-            onClick={() => setShowMethodModal(false)}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <CommonHeader size="lg">Add New Training Method</CommonHeader>
+          <CloseButton action={() => setShowMethodModal(false)} />
         </div>
 
         <div className="p-6 space-y-6">
@@ -75,30 +70,27 @@ const ShowMethodModal: React.FC<ShowMethodModalProps> = ({
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="text-base font-semibold text-blue-900 mb-2">
+          <div className="bg-[#EFF6FF] border border-blue-200 rounded-lg p-4">
+            <CommonHeader size="md" className="!text-[#1C398E]">
               Method Guidelines
-            </h4>
-            <p className="text-sm text-blue-800">
+            </CommonHeader>
+            <CommonHeader size="sm" className="!text-[#1C398E]">
               Provide clear instructions on tempo, rest periods, and intensity.
               This will help users understand how to properly execute the
               training method.
-            </p>
+            </CommonHeader>
           </div>
 
           <div className="flex gap-4">
-            <button
+            <CommonButton
               onClick={() => setShowMethodModal(false)}
-              className="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 font-medium"
+              className="!bg-white !text-[#5B667B] border border-[#5B667B]"
             >
               Cancel
-            </button>
-            <button
-              onClick={() => setShowMethodModal(false)}
-              className="flex-1 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 font-medium"
-            >
+            </CommonButton>
+            <CommonButton onClick={() => setShowMethodModal(false)}>
               Add Method
-            </button>
+            </CommonButton>
           </div>
         </div>
       </div>

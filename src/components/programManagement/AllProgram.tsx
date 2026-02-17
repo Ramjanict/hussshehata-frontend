@@ -1,3 +1,5 @@
+import ActionButton from "@/common/button/ActionButton";
+import SectionHeader from "@/common/button/SectionHeader";
 import { Edit, Trash2 } from "lucide-react";
 
 const programs = [
@@ -49,23 +51,26 @@ const AllProgram = () => {
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {program.name}
-                </h3>
+                <SectionHeader
+                  title={program.name}
+                  description=""
+                  className="!mb-0 line-clamp-1!"
+                />
+
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${getLevelColor(program.level)}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium hidden md:block ${getLevelColor(program.level)}`}
                 >
                   {program.level}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg flex items-center gap-2 hover:bg-indigo-700 text-sm">
+                <ActionButton>
                   <Edit className="w-4 h-4" />
                   Edit
-                </button>
-                <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
+                </ActionButton>
+                <ActionButton variant="delete">
                   <Trash2 className="w-5 h-5" />
-                </button>
+                </ActionButton>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-6">

@@ -6,6 +6,9 @@
 @theme {
   --color-black: #090818;
   --color-blue: #818CF8;
+  --color-darkBlue: #A78BFA;
+  --color-darkPurple: #A78BFA;;
+  --color-purple: #7600CA;
   --font-sans: Arial, Helvetica, system-ui, sans-serif;
 }
 
@@ -125,3 +128,5 @@
     @apply bg-background text-foreground font-sans;
   }
 }
+
+

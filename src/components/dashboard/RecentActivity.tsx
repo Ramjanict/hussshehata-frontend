@@ -1,3 +1,4 @@
+import SectionHeader from "@/common/button/SectionHeader";
 import { Activity, Crown, Dumbbell, UserPlus } from "lucide-react";
 
 const topContent = [
@@ -38,10 +39,11 @@ const RecentActivity = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
       <div className="bg-white text-black rounded-2xl p-6">
-        <h3 className="text-xl font-bold mb-1">Recent Activity</h3>
-        <p className="text-gray-500 text-sm mb-6">
-          Latest user actions and events
-        </p>
+        <SectionHeader
+          title="Recent Activity"
+          description="Latest user actions and events"
+        />
+
         <div className="space-y-4">
           {activities.map((activity, index) => {
             const Icon = activity.icon;
@@ -63,10 +65,12 @@ const RecentActivity = () => {
         </div>
       </div>
 
-      {/* Top Content */}
       <div className="bg-white text-black rounded-2xl p-6">
-        <h3 className="text-xl font-bold mb-1">Top Content</h3>
-        <p className="text-gray-500 text-sm mb-6">Most viewed this week</p>
+        <SectionHeader
+          title="Top Content"
+          description="Most viewed this week"
+        />
+
         <div className="space-y-4">
           {topContent.map((content, index) => (
             <div key={index} className="flex items-center justify-between">

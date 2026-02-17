@@ -16,13 +16,13 @@ const DashboardLayout = () => {
 
       <main className="flex-1 lg:ml-68 flex flex-col">
         <Header sheetOpen={isSheetOpen} setSheetOpen={setIsSheetOpen} />
-        <div className="bg-gray-100 flex-1 overflow-y-auto p-6 pt-22 min-h-0">
+        <div className="bg-gray-100 flex-1 overflow-y-auto overflow-x-hidden p-6 pt-22 min-h-0 w-full max-w-full">
           <Outlet />
         </div>
       </main>
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-64 pt-2">
           <Sidebar onItemClick={() => setIsSheetOpen(false)} />
         </SheetContent>
       </Sheet>

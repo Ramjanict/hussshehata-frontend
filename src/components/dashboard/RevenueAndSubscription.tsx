@@ -1,3 +1,4 @@
+import SectionHeader from "@/common/button/SectionHeader";
 import {
   Bar,
   BarChart,
@@ -31,10 +32,11 @@ const RevenueAndSubscription = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
       <div className="bg-white text-black rounded-2xl p-6">
-        <h3 className="text-xl font-bold mb-1">Revenue & Subscriptions</h3>
-        <p className="text-gray-500 text-sm mb-6">
-          Monthly revenue and new subscriptions trend
-        </p>
+        <SectionHeader
+          title="Revenue & Subscriptions"
+          description=" Monthly revenue and new subscriptions trend"
+        />
+
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={revenueData}>
             <defs>
@@ -60,10 +62,11 @@ const RevenueAndSubscription = () => {
       </div>
 
       <div className="bg-white text-black rounded-2xl p-6">
-        <h3 className="text-xl font-bold mb-1">User Growth</h3>
-        <p className="text-gray-500 text-sm mb-6">
-          Premium vs Free user growth
-        </p>
+        <SectionHeader
+          title="User Growth"
+          description=" Premium vs Free user growth"
+        />
+
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={userGrowthData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

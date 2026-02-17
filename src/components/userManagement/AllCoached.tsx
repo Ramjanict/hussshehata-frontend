@@ -1,3 +1,4 @@
+import image from "@/assets/images/woman.png";
 import AllUsersTable from "./AllUsersTable";
 
 const coachesData = [
@@ -5,7 +6,7 @@ const coachesData = [
     id: 1,
     name: "Sarah Johnson",
     email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     type: "Clients",
     status: "Active",
     subscription: "Premium",
@@ -18,7 +19,7 @@ const coachesData = [
     id: 2,
     name: "Sarah Johnson",
     email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     type: "Clients",
     status: "Active",
     subscription: "Free",
@@ -31,7 +32,7 @@ const coachesData = [
     id: 3,
     name: "Sarah Johnson",
     email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     type: "Clients",
     status: "Active",
     subscription: "Free",
@@ -44,7 +45,7 @@ const coachesData = [
     id: 4,
     name: "Sarah Johnson",
     email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     type: "Clients",
     status: "Active",
     subscription: "Free",
@@ -57,7 +58,7 @@ const coachesData = [
     id: 5,
     name: "Sarah Johnson",
     email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     type: "Clients",
     status: "Active",
     subscription: "Free",
@@ -70,7 +71,7 @@ const coachesData = [
     id: 6,
     name: "Sarah Johnson",
     email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
+    avatar: image,
     type: "Clients",
     status: "Active",
     subscription: "Free",

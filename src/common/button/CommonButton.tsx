@@ -13,7 +13,7 @@ const CommonButton: React.FC<CommonButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    "px-4 sm:px-6 py-2 rounded-md font-medium transition text-lg cursor-pointer";
+    "px-4  py-2 rounded-md font-medium transition text-lg cursor-pointer flex items-center justify-center gap-1";
   const variantClasses = {
     primary: "bg-blue text-white ",
     secondary: "bg-white border border-blue text-[#919EAB]",

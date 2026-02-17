@@ -1,74 +1,94 @@
-import { Crown, MoreVertical } from "lucide-react";
-import { getStatusColor, getTypeColor } from "../userManagement/AllUsersTable";
+import SectionHeader from "@/common/button/SectionHeader";
 
-const performanceUsers = [
+interface Program {
+  id: string;
+  name: string;
+  type: string;
+  enrolment: number;
+  activeUsers: number;
+  completion: number;
+  revenue: number;
+  trend: "Growing" | "Declining" | "Stable";
+}
+
+const programs: Program[] = [
   {
-    id: 1,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
-    type: "Clients",
-    status: "Active",
-    subscription: "Premium",
-    registration: "2025-01-10",
-    lastLogin: "2026-01-22",
+    id: "1",
+    name: "Monster Confusion (Classic)",
+    type: "10 Weeks",
+    enrolment: 456,
+    activeUsers: 342,
+    completion: 46,
+    revenue: 12450,
+    trend: "Growing",
   },
   {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
-    type: "Clients",
-    status: "Active",
-    subscription: "Free",
-    registration: "2025-01-10",
-    lastLogin: "2026-01-22",
+    id: "2",
+    name: "Monster Confusion (Classic)",
+    type: "10 Weeks",
+    enrolment: 456,
+    activeUsers: 342,
+    completion: 46,
+    revenue: 12450,
+    trend: "Declining",
   },
   {
-    id: 3,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
-    type: "Clients",
-    status: "Active",
-    subscription: "Free",
-    registration: "2025-01-10",
-    lastLogin: "2026-01-22",
+    id: "3",
+    name: "Monster Confusion (Classic)",
+    type: "10 Weeks",
+    enrolment: 456,
+    activeUsers: 342,
+    completion: 46,
+    revenue: 12450,
+    trend: "Growing",
   },
   {
-    id: 4,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
-    type: "Clients",
-    status: "Active",
-    subscription: "Free",
-    registration: "2025-01-10",
-    lastLogin: "2026-01-22",
-  },
-  {
-    id: 5,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
-    type: "Clients",
-    status: "Active",
-    subscription: "Free",
-    registration: "2025-01-10",
-    lastLogin: "2026-01-22",
-  },
-  {
-    id: 6,
-    name: "Sarah Johnson",
-    email: "sarah.j@email.com",
-    avatar: "/api/placeholder/40/40",
-    type: "Clients",
-    status: "Active",
-    subscription: "Free",
-    registration: "2025-01-10",
-    lastLogin: "2026-01-22",
+    id: "4",
+    name: "Monster Confusion (Classic)",
+    type: "10 Weeks",
+    enrolment: 456,
+    activeUsers: 342,
+    completion: 46,
+    revenue: 12450,
+    trend: "Growing",
   },
 ];
+
+const tableHeaders = [
+  { label: "Program Name", align: "text-left" },
+  { label: "Type", align: "text-center xl:table-cell hidden" },
+  { label: "Enrolment", align: "text-center md:table-cell hidden" },
+  { label: "Active Users", align: "text-center lg:table-cell hidden" },
+  { label: "Completion", align: "text-center" },
+  { label: "Revenue", align: "text-center md:table-cell hidden" },
+  { label: "Trend", align: "text-center sm:table-cell hidden" },
+];
+
+const TrendBadge: React.FC<{ trend: Program["trend"] }> = ({ trend }) => {
+  if (trend === "Growing") {
+    return (
+      <span className="text-green-500 font-medium text-sm">↑ Growing</span>
+    );
+  }
+  if (trend === "Declining") {
+    return (
+      <span className="text-red-500 font-medium text-sm">↓ Declining</span>
+    );
+  }
+  return <span className="text-gray-500 font-medium text-sm">→ Stable</span>;
+};
+
+const CompletionBar: React.FC<{ value: number }> = ({ value }) => (
+  <div className="flex items-center gap-2">
+    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        className="h-full bg-indigo-500 rounded-full"
+        style={{ width: `${value}%` }}
+      />
+    </div>
+    <span className="text-sm text-gray-600">{value}%</span>
+  </div>
+);
 const enrollmentPrograms = [
   { name: "10-Week Monster Confusion (Classic)", users: 342, percentage: 16 },
   {
@@ -80,10 +100,19 @@ const enrollmentPrograms = [
   { name: "2-2-2 Method", users: 189, percentage: 65 },
 ];
 
+export const tableDesign = {
+  table:
+    "w-full border-separate border-spacing-0 border border-[#EEF2FF] rounded-lg overflow-hidden",
+  thead: "bg-[#EEF2FF] text-black",
+  tbody: "text-[#101828]",
+  tr: "border-b last:border-b-0 border-[#EEF2FF]",
+  th: "text-left py-3 px-4 text-sm font-bold text-black border-b border-r border-[#EEF2FF] first:rounded-tl-lg last:rounded-tr-lg",
+  td: "text-left py-3 px-4 text-sm text-[#101828] border-b border-r border-[#EEF2FF] last:border-r-0",
+};
+
 const ProgramAnalytics = () => {
   return (
     <div className="space-y-6">
-      {/* Top Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-blue-600 rounded-xl p-6 text-white">
           <p className="text-sm opacity-90 mb-2">Most Popular Program</p>
@@ -99,14 +128,12 @@ const ProgramAnalytics = () => {
         </div>
       </div>
 
-      {/* Enrollment Programs */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Enrolment Programs (This Week)
-        </h3>
-        <p className="text-sm text-gray-600 mb-6">
-          By enrollments and completion rate
-        </p>
+        <SectionHeader
+          title="Enrollment Programs"
+          description="By enrollments and completion rate"
+        />
+
         <div className="space-y-4">
           {enrollmentPrograms.map((program, index) => (
             <div key={index}>
@@ -136,91 +163,59 @@ const ProgramAnalytics = () => {
 
       {/* Program Performance Breakdown */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Program Performance Breakdown
-        </h3>
-        <p className="text-sm text-gray-600 mb-6">
-          Detailed metrics for each program
-        </p>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-blue-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Program Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Subscription
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Registration
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Last Login
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">
-                  Action
-                </th>
+        <SectionHeader
+          title="Program Performance Breakdown"
+          description="Detailed metrics for each program"
+        />
+
+        <div className="w-full overflow-x-auto">
+          <table className={tableDesign.table}>
+            <thead className={tableDesign.thead}>
+              <tr className={tableDesign.tr}>
+                {tableHeaders.map((header, index) => (
+                  <th
+                    key={index}
+                    className={`
+                    ${tableDesign.th}
+                    ${header.align}
+                  `}
+                  >
+                    {header.label}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {performanceUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {user.name}
-                        </p>
-                        <p className="text-xs text-gray-500">{user.email}</p>
-                      </div>
+            <tbody>
+              {programs.map((program) => (
+                <tr key={program.id} className={tableDesign.tr}>
+                  <td className={tableDesign.td}>{program.name}</td>
+
+                  <td className={`xl:table-cell hidden ${tableDesign.td}`}>
+                    <span className="inline-block bg-purple-100 text-purple-600 text-xs font-medium px-3 py-1 rounded-full">
+                      {program.type}
+                    </span>
+                  </td>
+
+                  <td className={`md:table-cell hidden ${tableDesign.td}`}>
+                    {program.enrolment.toLocaleString()}
+                  </td>
+
+                  <td className={`lg:table-cell hidden ${tableDesign.td}`}>
+                    {program.activeUsers.toLocaleString()}
+                  </td>
+
+                  <td className={` ${tableDesign.td}`}>
+                    <div className="flex justify-center">
+                      <CompletionBar value={program.completion} />
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(user.type)}`}
-                    >
-                      {user.type}
-                    </span>
+
+                  <td className={`md:table-cell hidden ${tableDesign.td}`}>
+                    ${program.revenue.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}
-                    >
-                      {user.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`text-sm ${user.subscription === "Premium" ? "text-orange-600 flex items-center gap-1" : "text-blue-600"}`}
-                    >
-                      {user.subscription === "Premium" && (
-                        <Crown className="w-4 h-4" />
-                      )}
-                      {user.subscription}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {user.registration}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {user.lastLogin}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <MoreVertical className="w-5 h-5" />
-                    </button>
+
+                  <td className={` sm:table-cell hidden  ${tableDesign.td}`}>
+                    <TrendBadge trend={program.trend} />
                   </td>
                 </tr>
               ))}

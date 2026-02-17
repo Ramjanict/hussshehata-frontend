@@ -1,4 +1,8 @@
+import CommonButton from "@/common/button/CommonButton";
+import CommonSwitch from "@/common/custom/CommonSwitch";
 import DashboardTopSection from "@/common/DashboardTopSection";
+import CommonHeader from "@/common/header/CommonHeader";
+import { inputClass } from "@/components/programManagement/modal/showExerciseModal";
 import React, { useState } from "react";
 
 interface NotificationTemplate {
@@ -66,154 +70,100 @@ const Settings: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSendNow = () => {
-    console.log("Sending notification:", formData);
-    // Add your send logic here
-  };
-
-  const handleSchedule = () => {
-    console.log("Scheduling notification:", formData);
-    // Add your schedule logic here
-  };
-
-  const getCategoryColor = (category: string): string => {
-    const colors: Record<string, string> = {
-      Engagement: "bg-purple-100 text-purple-700",
-      Motivation: "bg-blue-100 text-blue-700",
-      Marketing: "bg-indigo-100 text-indigo-700",
-    };
-    return colors[category] || "bg-gray-100 text-gray-700";
-  };
-
   return (
-    <div className=" ">
-      <div className="">
-        <DashboardTopSection
-          title="Analytics & Reports"
-          description="Track performance metrics and insights"
-        />
+    <div className="">
+      <DashboardTopSection
+        title="Analytics & Reports"
+        description="Track performance metrics and insights"
+      />
 
-        {/* Push Notification Templates */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Push Notification Templates
-          </h2>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <CommonHeader size="lg">Push Notification Templates</CommonHeader>
 
-          <div className="space-y-3">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-900 font-medium">
-                    {template.name}
-                  </span>
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}
-                  >
-                    {template.category}
-                  </span>
-                </div>
-
-                <button
-                  onClick={() => toggleTemplate(template.id)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
-                    template.enabled ? "bg-purple-500" : "bg-gray-300"
-                  }`}
-                  role="switch"
-                  aria-checked={template.enabled}
+        <div className="space-y-3">
+          {templates.map((template) => (
+            <div
+              key={template.id}
+              className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-gray-900 font-medium">
+                  {template.name}
+                </span>
+                <span
+                  className={`px-2 py-1 rounded text-xs font-medium bg-[#DBEAFE] text-[#1447E6] hidden md:block`}
                 >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      template.enabled ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
+                  {template.category}
+                </span>
               </div>
-            ))}
-          </div>
+
+              <CommonSwitch
+                checked={template.enabled}
+                onChange={() => {
+                  toggleTemplate(template.id);
+                }}
+              />
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* Send Custom Notification */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Send Custom Notification
-          </h2>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <CommonHeader size="lg">Send Custom Notification</CommonHeader>
+        <div className="space-y-4 pt-2">
+          <div>
+            <label htmlFor="targetAudience" className={inputClass.label}>
+              Target Audience
+            </label>
+            <input
+              type="text"
+              id="targetAudience"
+              name="targetAudience"
+              value={formData.targetAudience}
+              onChange={handleInputChange}
+              className={inputClass.input}
+              placeholder="target audience..."
+            />
+          </div>
 
-          <div className="space-y-4">
-            {/* Target Audience */}
-            <div>
-              <label
-                htmlFor="targetAudience"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Target Audience
-              </label>
-              <input
-                type="text"
-                id="targetAudience"
-                name="targetAudience"
-                value={formData.targetAudience}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder=""
-              />
-            </div>
+          <div>
+            <label htmlFor="title" className={inputClass.label}>
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              className={inputClass.input}
+              placeholder="Notification title..."
+            />
+          </div>
 
-            {/* Title */}
-            <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Title
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Notification title..."
-              />
-            </div>
+          <div>
+            <label htmlFor="message" className={inputClass.label}>
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
+              rows={4}
+              className={inputClass.input}
+              placeholder="Notification message..."
+            />
+          </div>
 
-            {/* Message */}
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleInputChange}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                placeholder="Notification message..."
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={handleSendNow}
-                className="flex-1 bg-purple-500 text-white font-medium py-2.5 px-4 rounded-md hover:bg-purple-600 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-              >
-                Send Now
-              </button>
-              <button
-                onClick={handleSchedule}
-                className="bg-white text-gray-700 font-medium py-2.5 px-6 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-              >
-                Schedule
-              </button>
-            </div>
+          <div className="flex gap-3 pt-2">
+            <CommonButton className="w-full">Send Now</CommonButton>
+            <CommonButton
+              variant="secondary"
+              className="border border-[#D1D5DC]! text-[#0A0A0A]!"
+            >
+              Schedule
+            </CommonButton>
           </div>
         </div>
       </div>
