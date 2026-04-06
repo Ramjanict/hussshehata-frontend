@@ -8,6 +8,7 @@ import Settings from "@/pages/Settings";
 import UserManagement from "@/pages/UserManagement";
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
+import ProtectedRoute from "./ProtectedRoute";
 
 const routes = createBrowserRouter([
   {
@@ -19,16 +20,25 @@ const routes = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "dashboard",
-        element: <DashboardLayout />,
+        element: <ProtectedRoute />,
         children: [
-          { index: true, element: <Dashboard /> },
-          { path: "user-management", element: <UserManagement /> },
-          { path: "program-management", element: <ProgramManagement /> },
-          { path: "content-management", element: <ContentManagement /> },
-          { path: "premium-features", element: <PremiumFeatures /> },
-          { path: "settings", element: <Settings /> },
+          {
+            path: "dashboard",
+            element: <DashboardLayout />,
+            children: [
+              { index: true, element: <Dashboard /> },
+              { path: "user-management", element: <UserManagement /> },
+              { path: "program-management", element: <ProgramManagement /> },
+              { path: "content-management", element: <ContentManagement /> },
+              { path: "premium-features", element: <PremiumFeatures /> },
+              { path: "settings", element: <Settings /> },
+            ],
+          },
         ],
+      },
+      {
+        path: "*",
+        element: <Login />,
       },
     ],
   },

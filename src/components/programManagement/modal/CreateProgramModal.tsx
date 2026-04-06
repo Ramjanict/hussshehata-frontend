@@ -1,6 +1,9 @@
 import CloseButton from "@/common/button/CloseButton";
 import CommonHeader from "@/common/header/CommonHeader";
-import { useState } from "react";
+import { useGetReviewQuery } from "@/store/features/program/programAPI";
+import type { ProgramSingle } from "@/store/features/program/types/program";
+import type { ProgramReviewResponse } from "@/store/features/program/types/review";
+import { useAppSelector } from "@/store/hook";
 import StepIndicator from "./StepIndicator";
 import AddExercises from "./step/AddExercises";
 import BasicInfo from "./step/BasicInfo";
@@ -11,21 +14,26 @@ interface CreateProgramModalProps {
   setShowCreateModal: (show: boolean) => void;
   setCurrentStep: (step: number) => void;
   currentStep: number;
-  setShowExerciseModal: (show: boolean) => void;
+  selectProgram: ProgramSingle | null;
 }
 
 const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
   setShowCreateModal,
   setCurrentStep,
   currentStep,
-  setShowExerciseModal,
+  selectProgram,
 }) => {
-  const [selectedWeek, setSelectedWeek] = useState("Week 1");
-
   const handleClose = () => {
     setShowCreateModal(false);
     setCurrentStep(1);
   };
+
+  const { programId } = useAppSelector((state) => state.program);
+
+  const { data: review } = useGetReviewQuery(programId!, {
+    skip: !programId,
+    refetchOnMountOrArgChange: true,
+  });
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -44,25 +52,14 @@ const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
           {currentStep === 1 && (
             <BasicInfo
               setCurrentStep={setCurrentStep}
-              setShowCreateModal={setShowCreateModal}
-              setShowExerciseModal={setShowExerciseModal}
-              currentStep={currentStep}
+              selectProgram={selectProgram}
             />
           )}
 
-          {currentStep === 2 && (
-            <DaySplit
-              setCurrentStep={setCurrentStep}
-              selectedWeek={selectedWeek}
-              setSelectedWeek={setSelectedWeek}
-            />
-          )}
+          {currentStep === 2 && <DaySplit setCurrentStep={setCurrentStep} />}
 
           {currentStep === 3 && (
-            <AddExercises
-              setCurrentStep={setCurrentStep}
-              setShowExerciseModal={setShowExerciseModal}
-            />
+            <AddExercises setCurrentStep={setCurrentStep} review={review} />
           )}
 
           {currentStep === 4 && (
@@ -70,6 +67,7 @@ const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
               <Review
                 setCurrentStep={setCurrentStep}
                 setShowCreateModal={setShowCreateModal}
+                review={review as ProgramReviewResponse}
               />
             </div>
           )}
