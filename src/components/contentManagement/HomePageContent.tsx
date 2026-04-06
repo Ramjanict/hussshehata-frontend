@@ -1,55 +1,53 @@
+import DashboardCardSkeleton from "@/common/button/DashboardCardSkeleton";
+import Pagination from "@/common/custom/Pagination";
+import { useGetAllProgramCardQuery } from "@/store/features/content/essentialManagement";
+import { useState } from "react";
 import ProgramCard from "../reuseable/ProgramCard";
 
-const homePagePrograms = [
-  {
-    id: "1",
-    title: "10-Week Monster Confusion (Modernized)",
-    category: "Advanced",
-    position: 1,
-  },
-  {
-    id: "2",
-    title: "10-Week Monster Confusion (Classic)",
-    category: "Beginner",
-    position: 2,
-  },
-  {
-    id: "3",
-    title: "HUSS 8-Week Beast",
-    category: "Intermediate",
-    position: 3,
-  },
-  {
-    id: "4",
-    title: "HUSS 8-Week Beast",
-    category: "Advanced",
-    position: 4,
-  },
-];
 const HomePageContent = () => {
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useGetAllProgramCardQuery(
+    { page },
+    { refetchOnMountOrArgChange: true },
+  );
+  const programs = data?.data?.data?.data || [];
+  const list = new Array(10).fill(null);
   return (
     <div>
       <div className="space-y-4">
-        {homePagePrograms.map((program) => (
-          <div className="bg-white rounded-lg border border-[#E7E8EB] p-4 sm:p-6">
-            <ProgramCard
-              key={program.id}
-              id={program.id}
-              title={program.title}
-              category={program.category}
-              position={program.position}
-              icon={
-                <div className="flex  items-center text-gray-400 gap-0.5 ">
-                  <div className="text-xs">↑</div>
-                  <div className="text-xs">↓</div>
-                </div>
-              }
-              onDelete={() => {}}
-              onEdit={() => {}}
-              iconAction={() => {}}
-            />
-          </div>
-        ))}
+        {isLoading ? (
+          list.map((_, index) => <DashboardCardSkeleton key={index} />)
+        ) : programs.length > 0 ? (
+          programs.map((program) => (
+            <div className="bg-white rounded-lg border border-[#E7E8EB] p-4 sm:p-6">
+              <ProgramCard
+                key={program.id}
+                id={program.id}
+                title={program.name}
+                category={program.difficulty}
+                position={program.sortOrder}
+                icon={
+                  <div className="flex  items-center text-gray-400 gap-0.5 ">
+                    <div className="text-xs">↑</div>
+                    <div className="text-xs">↓</div>
+                  </div>
+                }
+                onDelete={() => {}}
+                onEdit={() => {}}
+                iconAction={() => {}}
+              />
+            </div>
+          ))
+        ) : (
+          <p className=" text-center"> No programs found</p>
+        )}
+      </div>
+      <div className="py-5">
+        <Pagination
+          currentPage={page}
+          onPageChange={(page) => setPage(page)}
+          totalPages={data?.data.data.meta.totalPage ?? 1}
+        />
       </div>
     </div>
   );

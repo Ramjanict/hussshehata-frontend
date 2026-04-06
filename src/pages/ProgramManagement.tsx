@@ -2,11 +2,10 @@ import CommonCard from "@/common/CommonCard";
 import DashboardTopSection from "@/common/DashboardTopSection";
 import AllProgram from "@/components/programManagement/AllProgram";
 import CreateProgramModal from "@/components/programManagement/modal/CreateProgramModal";
-import ShowExerciseModal from "@/components/programManagement/modal/showExerciseModal";
-import ShowMethodModal from "@/components/programManagement/modal/ShowMethodModal";
 import ProgramAnalytics from "@/components/programManagement/ProgramAnalytics";
 import Training from "@/components/programManagement/Training";
 import UserSearchBar from "@/components/userManagement/UserSearchBar";
+import type { ProgramSingle } from "@/store/features/program/types/program";
 import { Clock, Crown, Dumbbell, Users } from "lucide-react";
 import { useState } from "react";
 import UserTabs from "./UserTabs";
@@ -15,9 +14,7 @@ export const cardGrid =
 const ProgramManagement = () => {
   const [activeTab, setActiveTab] = useState("All Programs");
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showMethodModal, setShowMethodModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   const statsData = [
     {
@@ -55,14 +52,23 @@ const ProgramManagement = () => {
     "Training Methods Library",
     "Program Analytics",
   ];
-
+  const [selectProgram, setSelectProgram] = useState<null | ProgramSingle>(
+    null,
+  );
+  const handleEdit = (item: ProgramSingle) => {
+    setSelectProgram(item);
+    setShowCreateModal(true);
+  };
   return (
     <div className="space-y-6">
       <DashboardTopSection
         title="Program Management"
         description="Create and manage comprehensive workout programs"
         buttonText="Create Program"
-        action={() => setShowCreateModal(true)}
+        action={() => {
+          setShowCreateModal(true);
+          setSelectProgram(null);
+        }}
       />
 
       <div className={cardGrid}>
@@ -73,25 +79,17 @@ const ProgramManagement = () => {
 
       <UserTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
       <UserSearchBar />
-      {activeTab === "All Programs" && <AllProgram />}
-      {activeTab === "Training Methods Library" && (
-        <Training setShowMethodModal={setShowMethodModal} />
-      )}
+      {activeTab === "All Programs" && <AllProgram handleEdit={handleEdit} />}
+      {activeTab === "Training Methods Library" && <Training />}
       {activeTab === "Program Analytics" && <ProgramAnalytics />}
-      {showMethodModal && (
-        <ShowMethodModal setShowMethodModal={setShowMethodModal} />
-      )}
+
       {showCreateModal && (
         <CreateProgramModal
           setShowCreateModal={setShowCreateModal}
           setCurrentStep={setCurrentStep}
           currentStep={currentStep}
-          setShowExerciseModal={setShowExerciseModal}
+          selectProgram={selectProgram}
         />
-      )}
-
-      {showExerciseModal && (
-        <ShowExerciseModal setShowExerciseModal={setShowExerciseModal} />
       )}
     </div>
   );

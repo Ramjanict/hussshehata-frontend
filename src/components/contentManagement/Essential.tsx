@@ -1,16 +1,33 @@
-import image from "@/assets/images/card.jpg";
 import ActionButton from "@/common/button/ActionButton";
 import CommonButton from "@/common/button/CommonButton";
+import DashboardCardSkeleton from "@/common/button/DashboardCardSkeleton";
 import SectionHeader from "@/common/button/SectionHeader";
+import Pagination from "@/common/custom/Pagination";
 import TabButton from "@/common/custom/TabButton";
+import { useDebounce } from "@/common/custom/useDebounce";
 import CommonHeader from "@/common/header/CommonHeader";
-import type { EssentialType } from "@/pages/ContentManagement";
+import {
+  useDeleteHealthMarkerMutation,
+  useDeletePartnerMutation,
+  useDeleteSupplementMutation,
+  useGetHealthMarkersQuery,
+  useGetPartnerQuery,
+  useGetSupplementQuery,
+} from "@/store/features/content/essentialManagement";
+import type {
+  PartnerClinic,
+  SupplementProduct,
+} from "@/store/features/content/types/essential";
+import type { HealthMarkerItem } from "@/store/features/content/types/healthCare";
 import { Edit2, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { tableDesign } from "../programManagement/ProgramAnalytics";
 import UserSearchBar from "../userManagement/UserSearchBar";
-import type { EssentialCardProps } from "./EssentialCard";
 import EssentialCard from "./EssentialCard";
-
+import AddPartnerClinicModal from "./modal/AddPartnerClinicModal";
+import AddSupplementProductModal from "./modal/AddSupplementProductModal";
+import HealthMarkerModal from "./modal/HealthMarkerModal";
+export type EssentialType = "health" | "supplements";
 const tableHeaders = [
   { label: "Clinic Name", align: "text-left" },
   { label: "Location", align: "text-left hidden sm:table-cell" },
@@ -18,155 +35,80 @@ const tableHeaders = [
   { label: "Phone", align: "text-left hidden md:table-cell" },
   { label: "Trend", align: "text-left" },
 ];
-const partnerClinics = [
-  {
-    id: "1",
-    name: "Elite Diagnostics Center",
-    location: "New York, USA",
-    time: "8 AM - 6 PM",
-    phone: "+1 (555) 123-4567",
-    country: "USA",
-    city: "New York",
-    address: "Street address",
-    openTime: "8.00 Am",
-    closeTime: "5.00 Pm",
-  },
-  {
-    id: "2",
-    name: "Elite Diagnostics Center",
-    location: "New York, USA",
-    time: "8 AM - 6 PM",
-    phone: "+1 (555) 123-4567",
-    country: "USA",
-    city: "New York",
-    address: "Street address",
-    openTime: "8.00 Am",
-    closeTime: "5.00 Pm",
-  },
-  {
-    id: "3",
-    name: "Elite Diagnostics Center",
-    location: "New York, USA",
-    time: "8 AM - 6 PM",
-    phone: "+1 (555) 123-4567",
-    country: "USA",
-    city: "New York",
-    address: "Street address",
-    openTime: "8.00 Am",
-    closeTime: "5.00 Pm",
-  },
-  {
-    id: "4",
-    name: "Elite Diagnostics Center",
-    location: "New York, USA",
-    time: "8 AM - 6 PM",
-    phone: "+1 (555) 123-4567",
-    country: "USA",
-    city: "New York",
-    address: "Street address",
-    openTime: "8.00 Am",
-    closeTime: "5.00 Pm",
-  },
-];
 
-const supplementProducts = [
-  {
-    id: "1",
-    name: "Creatine HCL",
-    vendor: "Optimum Nutrition",
-    category: "Foundation",
-    price: 29.99,
-    benefits: ["No bloating", "Micronized", "Third-party tested"],
-    purchaseUrl: image,
-    inStock: true,
-  },
-  {
-    id: "2",
-    name: "Whey Protein Isolate",
-    vendor: "MyProtein",
-    category: "Protein",
-    price: 49.99,
-    benefits: ["Fast absorption", "Low lactose", "25g protein per serving"],
-    purchaseUrl: image,
-    inStock: true,
-  },
-  {
-    id: "3",
-    name: "Pre-Workout Extreme",
-    vendor: "C4 Energy",
-    category: "Performance",
-    price: 34.99,
-    benefits: ["Increased energy", "Enhanced focus", "Beta-alanine formula"],
-    purchaseUrl: image,
-    inStock: true,
-  },
-  {
-    id: "4",
-    name: "Omega-3 Fish Oil",
-    vendor: "Nordic Naturals",
-    category: "Health",
-    price: 24.99,
-    benefits: ["Heart health", "Brain support", "Lemon flavored"],
-    purchaseUrl: image,
-    inStock: false,
-  },
-  {
-    id: "5",
-    name: "BCAA Recovery",
-    vendor: "Scivation",
-    category: "Recovery",
-    price: 27.99,
-    benefits: ["Muscle recovery", "Reduce soreness", "Great taste"],
-    purchaseUrl: image,
-    inStock: true,
-  },
-  {
-    id: "6",
-    name: "Multivitamin Elite",
-    vendor: "Garden of Life",
-    category: "Foundation",
-    price: 39.99,
-    benefits: ["Complete nutrition", "Organic ingredients", "Easy to digest"],
-    purchaseUrl: image,
-    inStock: true,
-  },
-];
-const healthMarkers: EssentialCardProps[] = [
-  {
-    name: "High Blood Pressure",
-    list: [
-      "Testosterone levels (free and total)",
-      "Testosterone levels (free and total)",
-    ],
-    mark: 2,
-  },
-  {
-    name: "Low Blood Pressure",
-    list: [
-      "Testosterone levels (free and total)",
-      "Testosterone levels (free and total)",
-    ],
-    mark: 1,
-  },
-  {
-    name: "High Blood Pressure",
-    list: [
-      "Testosterone levels (free and total)",
-      "Testosterone levels (free and total)",
-    ],
-    mark: 5,
-  },
-];
-interface EssentialProps {
-  setShowAddModal: (show: boolean) => void;
-  setActiveEssentialType: (value: EssentialType) => void;
-  activeEssentialType: EssentialType;
-}
-const Essential: React.FC<EssentialProps> = ({
-  setShowAddModal,
-  activeEssentialType,
-  setActiveEssentialType,
-}) => {
+const Essential = () => {
+  const { data, isLoading } = useGetPartnerQuery();
+
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const searchDebounce = useDebounce(search, 500);
+  const { data: supplementData, isLoading: supplementLoading } =
+    useGetSupplementQuery({
+      search: searchDebounce,
+      category,
+      page,
+      limit: 3,
+    });
+  const partnerClinics = data?.data?.data || [];
+  const supplement = supplementData?.data?.data?.data || [];
+  const list = new Array(5).fill(null);
+  const [deleteSupplement] = useDeleteSupplementMutation();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const handleDeleteForSupplement = async (id: string) => {
+    try {
+      setDeletingId(id);
+      await deleteSupplement(id).unwrap();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+  const [activeEssentialType, setActiveEssentialType] =
+    useState<EssentialType>("health");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectSupplement, setSelectSupplement] =
+    useState<SupplementProduct | null>(null);
+  const [selectPartner, setSelectPartner] = useState<PartnerClinic | null>(
+    null,
+  );
+  const [deletePartner] = useDeletePartnerMutation();
+  const handleDeleteForHealth = async (id: string) => {
+    try {
+      setDeletingId(id);
+      await deletePartner(id).unwrap();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+  const [showHealthMarkerModalModal, setShowHealthMarkerModalModal] =
+    useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: healthMarker, isLoading: healthMarkerLoading } =
+    useGetHealthMarkersQuery({
+      page: currentPage,
+    });
+  const healthMarkersData = healthMarker?.data?.data.data ?? [];
+
+  const [selectedHealthMarker, setSelectedHealthMarker] =
+    useState<HealthMarkerItem | null>(null);
+
+  const [deleteHealthMarker] = useDeleteHealthMarkerMutation();
+  const handleDeleteHealthMarker = async (id: string) => {
+    try {
+      setDeletingId(id);
+      await deleteHealthMarker(id).unwrap();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div>
       <CommonHeader size="lg" className="mb-4">
@@ -197,111 +139,182 @@ const Essential: React.FC<EssentialProps> = ({
                   description="Manage drug/clinic fields and health indicators"
                 />
               </div>
-              <CommonButton onClick={() => setShowAddModal(true)}>
+              <CommonButton
+                onClick={() => {
+                  setShowHealthMarkerModalModal(true);
+                  setSelectedHealthMarker(null);
+                }}
+              >
                 <Plus size={20} />
                 Add Content
               </CommonButton>
             </div>
 
-            <div className="space-y-3">
-              {healthMarkers.map((i) => (
-                <EssentialCard name={i.name} list={i.list} mark={i.mark} />
-              ))}
-            </div>
+            {healthMarkerLoading ? (
+              list.map((_, index) => <DashboardCardSkeleton key={index} />)
+            ) : healthMarkersData.length > 0 ? (
+              <div className="space-y-3">
+                {healthMarkersData.map((marker) => (
+                  <EssentialCard
+                    name={marker.title}
+                    list={marker.items}
+                    onEdit={() => {
+                      setSelectedHealthMarker(marker as HealthMarkerItem);
+                      setShowHealthMarkerModalModal(true);
+                    }}
+                    onDelete={() => handleDeleteHealthMarker(marker.id)}
+                    isLoading={deletingId === marker.id}
+                  />
+                ))}
+                <div className="pt-4">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={healthMarker?.data.data.meta.totalPages || 1}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              </div>
+            ) : (
+              <p className="text-center py-2">No health markers found</p>
+            )}
           </div>
 
-          <div className=" bg-white p-6 rounded-lg ">
-            <div className="flex flex-col sm:flex-row justify-between items-stretch  sm:items-baseline-last  mb-4">
-              <div className="">
-                <SectionHeader
-                  title="Partner Clinics Directory"
-                  description="Manage medical providers and diagnostic centers"
-                  className=""
-                />
+          {isLoading ? (
+            <DashboardCardSkeleton />
+          ) : partnerClinics.length > 0 ? (
+            <div className=" bg-white p-6 rounded-lg ">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch  sm:items-baseline-last  mb-4">
+                <div className="">
+                  <SectionHeader
+                    title="Partner Clinics Directory"
+                    description="Manage medical providers and diagnostic centers"
+                    className=""
+                  />
+                </div>
+
+                <CommonButton
+                  onClick={() => {
+                    setShowAddModal(true);
+                    setSelectPartner(null);
+                  }}
+                >
+                  <Plus size={20} />
+                  Add Clinic
+                </CommonButton>
               </div>
 
-              <CommonButton onClick={() => setShowAddModal(true)}>
-                <Plus size={20} />
-                Add Clinic
-              </CommonButton>
-            </div>
-
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div className=" w-full overflow-x-auto">
-                <table className={tableDesign.table}>
-                  <thead className={tableDesign.thead}>
-                    <tr className={tableDesign.tr}>
-                      {tableHeaders.map((header, index) => (
-                        <th
-                          key={index}
-                          className={` ${header.align} ${tableDesign.th} `}
-                        >
-                          {header.label}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className={tableDesign.tbody}>
-                    {partnerClinics.map((clinic) => (
-                      <tr key={clinic.id} className={tableDesign.tr}>
-                        <td className={` ${tableDesign.td}`}>{clinic.name}</td>
-                        <td
-                          className={`hidden sm:table-cell ${tableDesign.td}`}
-                        >
-                          {clinic.location}
-                        </td>
-                        <td
-                          className={`hidden xl:table-cell ${tableDesign.td}`}
-                        >
-                          {clinic.time}
-                        </td>
-                        <td
-                          className={`hidden md:table-cell ${tableDesign.td}`}
-                        >
-                          {clinic.phone}
-                        </td>
-                        <td className={` ${tableDesign.td}`}>
-                          <div className="flex gap-2">
-                            <ActionButton
-                              variant="edit"
-                              editClassName="!bg-white !text-darkPurple border border-darkPurple"
-                            >
-                              <Edit2 size={16} />
-                            </ActionButton>
-                            <ActionButton variant="delete">
-                              <Trash2 size={16} />
-                            </ActionButton>
-                          </div>
-                        </td>
+              <div className="bg-white rounded-lg   overflow-hidden">
+                <div className=" w-full overflow-x-auto">
+                  <table className={tableDesign.table}>
+                    <thead className={tableDesign.thead}>
+                      <tr className={tableDesign.tr}>
+                        {tableHeaders.map((header, index) => (
+                          <th
+                            key={index}
+                            className={` ${header.align} ${tableDesign.th} ${index === 0 || index === 1 ? "text-left!" : ""} `}
+                          >
+                            {header.label}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className={tableDesign.tbody}>
+                      {partnerClinics.map((clinic) => (
+                        <tr key={clinic.id} className={tableDesign.tr}>
+                          <td className={`text-left! ${tableDesign.td}`}>
+                            {clinic.name}
+                          </td>
+                          <td
+                            className={`hidden sm:table-cell text-left! ${tableDesign.td} `}
+                          >
+                            {clinic.address}
+                          </td>
+                          <td
+                            className={`hidden xl:table-cell  ${tableDesign.td}`}
+                          >
+                            {clinic.closeTime}
+                          </td>
+                          <td
+                            className={`hidden md:table-cell ${tableDesign.td}`}
+                          >
+                            {clinic.phone}
+                          </td>
+                          <td className={` ${tableDesign.td}`}>
+                            <div className="flex items-center justify-center gap-2">
+                              <ActionButton
+                                variant="edit"
+                                editClassName="!bg-white !text-darkPurple border border-darkPurple"
+                                onClick={() => {
+                                  setShowAddModal(true);
+                                  setSelectPartner(clinic);
+                                }}
+                              >
+                                <Edit2 size={16} />
+                              </ActionButton>
+                              <ActionButton
+                                variant="delete"
+                                onClick={() => handleDeleteForHealth(clinic.id)}
+                                isDelete={deletingId === clinic.id}
+                              >
+                                <Trash2 size={16} />
+                              </ActionButton>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <p>No clinics found</p>
+          )}
         </>
       )}
       {activeEssentialType === "supplements" && (
         <>
-          <UserSearchBar />
+          <UserSearchBar
+            placeholder="Search orders..."
+            searchValue={search}
+            onSearchChange={(e) => setSearch(e.target.value)}
+            selectValue={category}
+            onSelectChange={setCategory}
+            selectItems={[
+              { label: "Foundation", value: "FOUNDATION" },
+              { label: "Performance", value: "PERFORMANCE" },
+              { label: "Recovery", value: "RECOVERY" },
+              { label: "Optional", value: "OPTIONAL" },
+            ]}
+          />
 
           <div>
-            <div className="flex flex-col sm:flex-row justify-between  items-stretch  sm:items-center my-4">
-              <div>
-                <SectionHeader
-                  title="Supplement Products"
-                  description="Manage product catalog, pricing, and availability"
-                />
+            {supplementLoading ? (
+              list.map((_, index) => <DashboardCardSkeleton key={index} />)
+            ) : supplement.length > 0 ? (
+              <div className="flex flex-col sm:flex-row justify-between  items-stretch  sm:items-center my-4">
+                <div>
+                  <SectionHeader
+                    title="Supplement Products"
+                    description="Manage product catalog, pricing, and availability"
+                  />
+                </div>
+                <CommonButton
+                  onClick={() => {
+                    setShowAddModal(true);
+                    setSelectSupplement(null);
+                  }}
+                >
+                  <Plus size={20} />
+                  Add Product
+                </CommonButton>
               </div>
-              <CommonButton onClick={() => setShowAddModal(true)}>
-                <Plus size={20} />
-                Add Product
-              </CommonButton>
-            </div>
+            ) : (
+              <p className="text-center py-2">No products found</p>
+            )}
 
             <div className="grid grid-cols-1  lg:grid-cols-2  xl:grid-cols-3 gap-4">
-              {supplementProducts.map((product) => (
+              {supplement.map((product) => (
                 <div
                   key={product.id}
                   className="bg-white rounded-lg border border-gray-200 p-4"
@@ -309,18 +322,20 @@ const Essential: React.FC<EssentialProps> = ({
                   <div className="relative mb-4">
                     <div className=" h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center mb-3">
                       <img
-                        src={product.purchaseUrl}
+                        src={product.imageUrl}
                         alt={product.name}
                         className="max-h-full"
                       />
                     </div>
-                    <span className="absolute top-2 right-2 bg-[#DCFCE7]  text-[#008236] px-2 py-1 rounded-full">
-                      In Stock
+                    <span
+                      className={`absolute top-2 right-2 ${product.inStock ? "bg-[#DCFCE7] text-[#008236]" : "bg-red-100 text-red-700"}  px-2 py-1 rounded-full`}
+                    >
+                      {product.inStock ? "In stock" : "Out of stock"}
                     </span>
                   </div>
                   <h4 className="font-bold mb-1">{product.name}</h4>
                   <p className="text-sm text-gray-600 mb-2">
-                    Sold by: {product.vendor}
+                    Sold by: {product.vendorName}
                   </p>
                   <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded mb-3">
                     {product.category}
@@ -339,10 +354,18 @@ const Essential: React.FC<EssentialProps> = ({
                       <ActionButton
                         variant="edit"
                         editClassName=" !bg-white border border-darkPurple "
+                        onClick={() => {
+                          setSelectSupplement(product);
+                          setShowAddModal(true);
+                        }}
                       >
                         <Edit2 size={16} className="text-darkPurple" />
                       </ActionButton>
-                      <ActionButton variant="delete">
+                      <ActionButton
+                        variant="delete"
+                        onClick={() => handleDeleteForSupplement(product.id)}
+                        isDelete={deletingId === product.id}
+                      >
                         <Trash2 size={16} className="text-red-500" />
                       </ActionButton>
                     </div>
@@ -351,7 +374,36 @@ const Essential: React.FC<EssentialProps> = ({
               ))}
             </div>
           </div>
+          {supplementData && supplementData?.data.data.data.length > 1 && (
+            <div className="py-5">
+              <Pagination
+                currentPage={page}
+                totalPages={supplementData?.data.data.meta.totalPages || 1}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </>
+      )}
+
+      {showHealthMarkerModalModal && activeEssentialType === "health" && (
+        <HealthMarkerModal
+          onClose={() => setShowHealthMarkerModalModal(false)}
+          isOpen={showHealthMarkerModalModal}
+          selectedHealthMarker={selectedHealthMarker as HealthMarkerItem | null}
+        />
+      )}
+      {showAddModal && activeEssentialType === "health" && (
+        <AddPartnerClinicModal
+          onClose={() => setShowAddModal(false)}
+          selectPartner={selectPartner}
+        />
+      )}
+      {showAddModal && activeEssentialType === "supplements" && (
+        <AddSupplementProductModal
+          onClose={() => setShowAddModal(false)}
+          selectSupplement={selectSupplement}
+        />
       )}
     </div>
   );
