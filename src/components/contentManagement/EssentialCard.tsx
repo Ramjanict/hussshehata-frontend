@@ -4,9 +4,17 @@ import { Edit2, Trash2 } from "lucide-react";
 export interface EssentialCardProps {
   name: string;
   list: string[];
-  mark: number;
+  onEdit: () => void;
+  onDelete: () => void;
+  isLoading?: boolean;
 }
-const EssentialCard: React.FC<EssentialCardProps> = ({ name, list, mark }) => {
+const EssentialCard: React.FC<EssentialCardProps> = ({
+  name,
+  list,
+  onEdit,
+  onDelete,
+  isLoading,
+}) => {
   return (
     <div className="bg-white rounded-lg border border-[#8E96A4] p-4">
       <div className="flex justify-between items-start">
@@ -18,14 +26,14 @@ const EssentialCard: React.FC<EssentialCardProps> = ({ name, list, mark }) => {
             ))}
           </ul>
         </div>
-        <span className="text-sm text-gray-500">{mark} markers</span>
+        {/* <span className="text-sm text-gray-500">{mark} markers</span> */}
       </div>
       <div className="flex gap-2 mt-4">
-        <ActionButton variant="edit">
+        <ActionButton onClick={onEdit} variant="edit">
           <Edit2 size={16} />
           Edit
         </ActionButton>
-        <ActionButton variant="delete">
+        <ActionButton isDelete={isLoading} onClick={onDelete} variant="delete">
           <Trash2 size={16} />
         </ActionButton>
       </div>

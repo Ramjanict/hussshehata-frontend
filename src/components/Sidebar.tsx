@@ -1,11 +1,15 @@
 import man from "@/assets/images/man.png";
+import CommonButton from "@/common/button/CommonButton";
 import CommonHeader from "@/common/header/CommonHeader";
 import { cn } from "@/lib/utils";
+import { logout } from "@/store/baseApi/auth/auth.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { Settings, User, Users } from "lucide-react";
 import { BsFillGridFill } from "react-icons/bs";
 import { FaCrown } from "react-icons/fa";
 import { LuDumbbell } from "react-icons/lu";
 import { PiBookOpenTextLight } from "react-icons/pi";
+import { RiLogoutCircleRLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
@@ -54,9 +58,14 @@ const menuItems = [
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handlelogout = () => {
+    dispatch(logout());
+  };
+  const { user } = useAppSelector((state) => state.auth);
   return (
     <div className="bg-white flex flex-col h-full w-full ">
       <div className="flex items-center justify-center m-6">
@@ -68,30 +77,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
               className="w-full h-full object-cover"
             />
           </div>
-          {/* Profile Section */}
+
           <div className="flex items-start justify-between mt-4 ">
             <div className="flex items-center gap-1">
-              {/* Profile Image */}
               <div className="w-7.5 h-7.5 rounded-full  overflow-hidden flex-shrink-0 bg-slate-700">
                 <img
-                  src={man}
+                  src={user?.avatar ?? man}
                   alt="Arlene McCoy"
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              {/* Name and Email */}
               <div className="flex-1">
                 <CommonHeader size="xs" className="!text-white">
-                  Arlene McCoy
+                  {user?.name ?? "Admin"}
                 </CommonHeader>
                 <CommonHeader size="xs" className="!text-[#5CE1E6]">
-                  Admin@gmail.com
+                  {user?.email ?? "Admin@gmail.com"}
                 </CommonHeader>
               </div>
             </div>
 
-            {/* Settings Icon */}
             <button className="text-slate-400 hover:text-cyan-400 transition-colors p-2">
               <User size={24} strokeWidth={1.5} />
             </button>
@@ -121,7 +127,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
                 )}
                 onClick={() => {
                   navigate(item.path);
-                  onItemClick?.(); // close sheet if provided
+                  onItemClick?.();
                 }}
               >
                 <Icon className="w-5 h-5" />
@@ -131,6 +137,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
           );
         })}
       </nav>
+      <div className="p-4">
+        <CommonButton
+          onClick={handlelogout}
+          className="w-full text-[#090818]! bg-white! border!  border-[#090818]!"
+        >
+          <RiLogoutCircleRLine /> Logout
+        </CommonButton>
+      </div>
     </div>
   );
 };

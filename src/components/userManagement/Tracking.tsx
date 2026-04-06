@@ -1,100 +1,14 @@
 import image from "@/assets/images/woman.png";
 import SectionHeader from "@/common/button/SectionHeader";
-const popularPrograms = [
-  { name: "10-Week Monster Confusion (Classic)", users: 342, percentage: 46 },
-  {
-    name: "10-Week Monster Confusion (Modernized)",
-    users: 298,
-    percentage: 75,
-  },
-  { name: "HUSS 8-Week Beast", users: 189, percentage: 75 },
-  { name: "2-2-2 Method", users: 189, percentage: 75 },
-];
+import type { ActivityTrackingResponse } from "@/store/features/program/types/activity";
 
-const recentActivity = [
-  {
-    id: 1,
-    userName: "Lisa Anderson",
-    avatar: image,
-    action: 'Completed "Monster Mass Builder - Week 3, Day 7"',
-    time: "5 min ago",
-    badge: "Active",
-  },
-  {
-    id: 2,
-    userName: "Mike Chen",
-    avatar: image,
-    action: 'Completed "Beginner Foundation - Week 1, Day 1"',
-    time: "2 min ago",
-    badge: "Active",
-  },
-  {
-    id: 3,
-    userName: "James Rodriguez",
-    avatar: image,
-    action: "Upgraded to Premium subscription",
-    time: "7 min ago",
-    badge: "Subscription",
-  },
-  {
-    id: 4,
-    userName: "James Rodriguez",
-    avatar: image,
-    action: "Upgraded to Premium subscription",
-    time: "2 min ago",
-    badge: "Subscription",
-  },
-  {
-    id: 5,
-    userName: "",
-    avatar: image,
-    action: 'Completed "Monster Mass Builder - Week 3, Day 2"',
-    time: "2 min ago",
-    badge: "Active",
-  },
-];
-
-const activeUsers = [
-  {
-    id: 1,
-    name: "John Smith",
-    avatar: image,
-    streak: "10 day streak",
-    workouts: 12,
-  },
-  {
-    id: 2,
-    name: "John Smith",
-    avatar: image,
-    streak: "10 day streak",
-    workouts: 12,
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    avatar: image,
-    streak: "10 day streak",
-    workouts: 12,
-  },
-  {
-    id: 4,
-    name: "John Smith",
-    avatar: image,
-    streak: "10 day streak",
-    workouts: 12,
-  },
-];
-const getBadgeColor = (badge: string) => {
-  switch (badge) {
-    case "Active":
-      return "bg-green-100 text-green-700";
-    case "Subscription":
-      return "bg-orange-100 text-orange-700";
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
-};
-const Tracking = () => {
+interface TrackingProps {
+  activity: ActivityTrackingResponse;
+}
+const Tracking: React.FC<TrackingProps> = ({ activity }) => {
+  const recentActivity = activity.data.data.userActivityLog ?? [];
+  const activeUsers = activity.data.data.mostRecentActiveUser ?? [];
+  const popularPrograms = activity.data.data.mostPopulerProgramme ?? [];
   return (
     <div className="space-y-6">
       {/* Recent User Activity */}
@@ -112,23 +26,25 @@ const Tracking = () => {
             >
               <div className="flex items-center gap-3">
                 <img
-                  src={activity.avatar}
-                  alt={activity.userName}
+                  src={image || activity.type}
+                  alt={activity.type || "User"}
                   className="w-10 h-10 rounded-full"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {activity.userName}
+                    {activity.type}
                   </p>
-                  <p className="text-xs text-gray-600">{activity.action}</p>
+                  <p className="text-xs text-gray-600">
+                    Completed "Monster Mass Builder - Week 3, Day 2
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-500">{activity.time}</span>
+                <span className="text-xs text-gray-500"> 2 min</span>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${getBadgeColor(activity.badge)}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium }`}
                 >
-                  {activity.badge}
+                  Active
                 </span>
               </div>
             </div>
@@ -150,7 +66,7 @@ const Tracking = () => {
               <div key={user.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
-                    src={user.avatar}
+                    src={user.avatar || image}
                     alt={user.name}
                     className="w-10 h-10 rounded-full"
                   />
@@ -158,12 +74,12 @@ const Tracking = () => {
                     <p className="text-sm font-medium text-gray-900">
                       {user.name}
                     </p>
-                    <p className="text-xs text-gray-600">{user.streak}</p>
+                    <p className="text-xs text-gray-600">{user.streakDays}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-gray-900">
-                    {user.workouts}
+                    {user.totalWorkouts}
                   </p>
                   <p className="text-xs text-gray-500">workouts</p>
                 </div>
@@ -191,14 +107,14 @@ const Tracking = () => {
                       {program.users} users
                     </span>
                     <span className="text-sm text-gray-500">
-                      {program.percentage}%
+                      {program.completionRate}%
                     </span>
                   </div>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full"
-                    style={{ width: `${program.percentage}%` }}
+                    style={{ width: `${program.completionRate}%` }}
                   ></div>
                 </div>
               </div>

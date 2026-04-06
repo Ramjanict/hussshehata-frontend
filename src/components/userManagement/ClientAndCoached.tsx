@@ -1,88 +1,10 @@
-import image from "@/assets/images/woman.png";
+import { formatDate } from "@/lib/help";
+import type { User } from "@/store/features/program/types/review";
 import { Crown, MoreVertical } from "lucide-react";
+import img from "../../assets/images/man.png";
 import { tableDesign } from "../programManagement/ProgramAnalytics";
 import { getStatusColor, getTypeColor } from "./AllUsersTable";
 
-const coachedClientsData = [
-  {
-    id: 1,
-    clientName: "Sarah Johnson",
-    clientEmail: "sarah.j@email.com",
-    clientAvatar: image,
-    coachName: "Sarah Johnson",
-    coachEmail: "sarah.j@email.com",
-    coachAvatar: image,
-    type: "Coached Client",
-    status: "Approved",
-    subscription: "Premium",
-    registration: "2025-01-10",
-  },
-  {
-    id: 2,
-    clientName: "Sarah Johnson",
-    clientEmail: "sarah.j@email.com",
-    clientAvatar: image,
-    coachName: "Sarah Johnson",
-    coachEmail: "sarah.j@email.com",
-    coachAvatar: image,
-    type: "Coached Client",
-    status: "Need Clearance",
-    subscription: "Free",
-    registration: "2025-01-10",
-  },
-  {
-    id: 3,
-    clientName: "Sarah Johnson",
-    clientEmail: "sarah.j@email.com",
-    clientAvatar: image,
-    coachName: "Sarah Johnson",
-    coachEmail: "sarah.j@email.com",
-    coachAvatar: image,
-    type: "Coached Client",
-    status: "Approved",
-    subscription: "Free",
-    registration: "2025-01-10",
-  },
-  {
-    id: 4,
-    clientName: "Sarah Johnson",
-    clientEmail: "sarah.j@email.com",
-    clientAvatar: image,
-    coachName: "Sarah Johnson",
-    coachEmail: "sarah.j@email.com",
-    coachAvatar: image,
-    type: "Coached Client",
-    status: "Need Clearance",
-    subscription: "Free",
-    registration: "2025-01-10",
-  },
-  {
-    id: 5,
-    clientName: "Sarah Johnson",
-    clientEmail: "sarah.j@email.com",
-    clientAvatar: image,
-    coachName: "Sarah Johnson",
-    coachEmail: "sarah.j@email.com",
-    coachAvatar: image,
-    type: "Coached Client",
-    status: "Approved",
-    subscription: "Free",
-    registration: "2025-01-10",
-  },
-  {
-    id: 6,
-    clientName: "Sarah Johnson",
-    clientEmail: "sarah.j@email.com",
-    clientAvatar: image,
-    coachName: "Sarah Johnson",
-    coachEmail: "sarah.j@email.com",
-    coachAvatar: image,
-    type: "Coached Client",
-    status: "Approved",
-    subscription: "Free",
-    registration: "2025-01-10",
-  },
-];
 const tableHeaders = [
   { label: "Coached clients", align: "text-left" },
   { label: "Coach", align: "text-left md:table-cell hidden" },
@@ -92,7 +14,11 @@ const tableHeaders = [
   { label: "Registration", align: "text-left xl:table-cell hidden" },
   { label: "Action", align: "text-left" },
 ];
-const ClientAndCoached = () => {
+
+interface UserProps {
+  users: User[];
+}
+const ClientAndCoached: React.FC<UserProps> = ({ users }) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <div className="block w-full overflow-x-auto">
@@ -102,7 +28,7 @@ const ClientAndCoached = () => {
               {tableHeaders.map((header, index) => (
                 <th
                   key={index}
-                  className={` ${header.align} ${tableDesign.th}`}
+                  className={` ${header.align} ${tableDesign.th} ${index === 0 || index === 1 ? "text-left!" : ""}`}
                 >
                   {header.label}
                 </th>
@@ -110,38 +36,36 @@ const ClientAndCoached = () => {
             </tr>
           </thead>
           <tbody className={tableDesign.tbody}>
-            {coachedClientsData.map((client) => (
+            {users.map((client) => (
               <tr key={client.id} className={tableDesign.tr}>
                 <td className={` ${tableDesign.td}`}>
                   <div className="flex items-center gap-3">
                     <img
-                      src={client.clientAvatar}
-                      alt={client.clientName}
+                      src={client.avatar || img}
+                      alt={client.name || ""}
                       className="w-10 h-10 rounded-full  hidden sm:block"
                     />
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {client.clientName}
+                        {client.name}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        {client.clientEmail}
-                      </p>
+                      <p className="text-xs text-gray-500">{client.email}</p>
                     </div>
                   </div>
                 </td>
                 <td className={` md:table-cell hidden ${tableDesign.td} `}>
                   <div className="flex items-center gap-3">
                     <img
-                      src={client.coachAvatar}
-                      alt={client.coachName}
+                      src={client.coachProfile?.profilePhoto || img}
+                      alt={client.coachProfile?.gymName || ""}
                       className="w-10 h-10 rounded-full"
                     />
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {client.coachName}
+                        {client.coachProfile?.gymName || "No Coach"}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {client.coachEmail}
+                        {client.coachProfile?.phoneNumber}
                       </p>
                     </div>
                   </div>
@@ -150,30 +74,28 @@ const ClientAndCoached = () => {
                   className={`truncate hidden lg:table-cell ${tableDesign.td} `}
                 >
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(client.type)}`}
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(client.role)}`}
                   >
-                    {client.type}
+                    {client.role}
                   </span>
                 </td>
                 <td className={` truncate ${tableDesign.td} `}>
                   <span
-                    className={` px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(client.status)}`}
+                    className={` px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(client.isPremium ? "Premium" : "Free")}`}
                   >
-                    {client.status}
+                    {client.isPremium ? "Premium" : "Free"}
                   </span>
                 </td>
                 <td className={` hidden xl:table-cell ${tableDesign.td} `}>
                   <span
-                    className={`text-sm ${client.subscription === "Premium" ? "text-orange-600 flex items-center gap-1" : "text-blue-600"}`}
+                    className={`text-sm flex items-center justify-center ${client.isPremium ? "text-orange-600  gap-1" : "text-blue-600"}`}
                   >
-                    {client.subscription === "Premium" && (
-                      <Crown className="w-4 h-4" />
-                    )}
-                    {client.subscription}
+                    {client.isPremium && <Crown className="w-4 h-4" />}
+                    {client.coachProfile?.totalClients}
                   </span>
                 </td>
-                <td className={` hidden xl:table-cell  ${tableDesign.td} `}>
-                  {client.registration}
+                <td className={`  hidden xl:table-cell  ${tableDesign.td} `}>
+                  {formatDate(client.createdAt)}
                 </td>
                 <td className={` ${tableDesign.td} `}>
                   <button className="text-gray-400 hover:text-gray-600">

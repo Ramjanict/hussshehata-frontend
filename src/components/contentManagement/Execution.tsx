@@ -1,54 +1,105 @@
+import CommonButton from "@/common/button/CommonButton";
+import DashboardCardSkeleton from "@/common/button/DashboardCardSkeleton";
+import CommonHeader from "@/common/header/CommonHeader";
+import {
+  useDeleteExecutionNoteMutation,
+  useGetExecutionNoteQuery,
+} from "@/store/features/content/contentAPI";
+import type { ExecutionNoteSingle } from "@/store/features/content/types/note";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 import ProgramCard from "../reuseable/ProgramCard";
+import AddExecutionNoteModal from "./modal/AddExecutionNoteModal";
 
-const executionNotes = [
-  {
-    id: "1",
-    title: "Workout Duration Rule",
-    position: 2,
-    notes: ["Aim to complete all sessions in under 60 minutes."],
-  },
-  {
-    id: "2",
-    title: "Adaptability + Personal Split",
-    position: 3,
-    notes: ["Customize the program based on your schedule and preferences."],
-  },
-  {
-    id: "3",
-    title: "Westside Days - Customization Allowed",
-    position: 4,
-    notes: ["Feel free to adjust Westside training days as needed."],
-  },
-];
-interface ExecutionProps {
-  setShowAddModal: (show: boolean) => void;
-}
-const Execution: React.FC<ExecutionProps> = ({ setShowAddModal }) => {
+const Execution = () => {
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const { data, isLoading } = useGetExecutionNoteQuery();
+  const list = new Array(5).fill(null);
+  const executionNotes = data?.data.data || [];
+  const [selectedNote, setSelectedNote] = useState<null | ExecutionNoteSingle>(
+    null,
+  );
+  const [deleteNote] = useDeleteExecutionNoteMutation();
+
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (!id) return;
+
+    try {
+      setDeletingId(id);
+      await deleteNote(id).unwrap();
+    } finally {
+      setDeletingId(null);
+      setShowNoteModal(false);
+      setSelectedNote(null);
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      {executionNotes.map((note) => (
-        <div
-          key={note.id}
-          className="bg-white rounded-lg border border-gray-200 p-6"
-        >
-          <ProgramCard
-            id={note.id}
-            title={note.title}
-            position={note.position}
-            onEdit={() => {
-              setShowAddModal(true);
+    <div>
+      <div className="space-y-4">
+        <div className="flex justify-between pb-4">
+          <div>
+            <CommonHeader size="2xl" className="">
+              Execution Notes
+            </CommonHeader>
+            <CommonHeader size="sm" className="">
+              Create and manage comprehensive notes.
+            </CommonHeader>
+          </div>
+          <CommonButton
+            onClick={() => {
+              setSelectedNote(null);
+              setShowNoteModal(true);
             }}
-            onDelete={() => {}}
-            iconAction={() => {}}
-            icon={
-              <div className="flex  items-center text-gray-400 gap-0.5 ">
-                <div className="text-xs">↑</div>
-                <div className="text-xs">↓</div>
-              </div>
-            }
-          />
+          >
+            <Plus />
+            Add Execution Note
+          </CommonButton>
         </div>
-      ))}
+        {isLoading ? (
+          list.map((_, index) => <DashboardCardSkeleton key={index} />)
+        ) : executionNotes.length > 0 ? (
+          executionNotes.map((note) => (
+            <div
+              key={note.id}
+              className="bg-white rounded-lg border border-gray-200 p-6"
+            >
+              <ProgramCard
+                id={note.id}
+                title={note.title}
+                position={note.position}
+                onEdit={() => {
+                  setShowNoteModal(true);
+                  setSelectedNote(note);
+                }}
+                onDelete={() => {
+                  handleDelete(note.id);
+                }}
+                isLoading={deletingId === note.id}
+                iconAction={() => {}}
+                icon={
+                  <div className="flex  items-center text-gray-400 gap-0.5 ">
+                    <div className="text-xs">↑</div>
+                    <div className="text-xs">↓</div>
+                  </div>
+                }
+              />
+            </div>
+          ))
+        ) : (
+          <div className="flex justify-center items-center h-40">
+            <p className="text-gray-500">No execution notes found</p>
+          </div>
+        )}
+      </div>
+      {showNoteModal && (
+        <AddExecutionNoteModal
+          onClose={() => setShowNoteModal(false)}
+          selectedNote={selectedNote}
+        />
+      )}
     </div>
   );
 };

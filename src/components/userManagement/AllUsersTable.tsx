@@ -1,4 +1,7 @@
+import { formatDate } from "@/lib/help";
+import type { User } from "@/store/features/program/types/review";
 import { Crown, MoreVertical } from "lucide-react";
+import img from "../../assets/images/man.png";
 import { tableDesign } from "../programManagement/ProgramAnalytics";
 const tableHeaders = [
   { label: "Program Name", align: "text-left" },
@@ -9,17 +12,6 @@ const tableHeaders = [
   { label: "Last Login", align: "text-left hidden lg:table-cell" },
   { label: "Action", align: "text-left" },
 ];
-export interface User {
-  id: number | string;
-  name: string;
-  email: string;
-  avatar: string;
-  type: "Clients" | "Coach" | "Coached Client" | string;
-  status: "Active" | "Approved" | "Need Clearance" | string;
-  subscription: "Premium" | "Free" | string;
-  registration: string; // e.g. "2025-01-10"
-  lastLogin: string;
-}
 
 export interface AllUsersTableProps {
   users: User[];
@@ -29,9 +21,9 @@ export interface AllUsersTableProps {
 
 export const getTypeColor = (type: string): string => {
   switch (type) {
-    case "Clients":
+    case "USER":
       return "bg-purple-100 text-purple-700";
-    case "Coach":
+    case "COACH":
       return "bg-blue-100 text-blue-700";
     case "Coached Client":
       return "bg-cyan-100 text-cyan-700";
@@ -43,7 +35,6 @@ export const getTypeColor = (type: string): string => {
 export const getStatusColor = (status: string): string => {
   switch (status) {
     case "Active":
-    case "Approved":
       return "bg-green-100 text-green-700";
     case "Need Clearance":
       return "bg-yellow-100 text-yellow-700";
@@ -67,7 +58,7 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
                 {tableHeaders.map((header, index) => (
                   <th
                     key={index}
-                    className={` ${header.align} ${tableDesign.th}`}
+                    className={` ${header.align} ${tableDesign.th} ${index === 0 ? "text-left!" : ""}`}
                   >
                     {header.label}
                   </th>
@@ -88,7 +79,7 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
                     <td className={` ${tableDesign.td} `}>
                       <div className="flex items-center gap-3">
                         <img
-                          src={user.avatar}
+                          src={user.avatar || img}
                           alt={user.name}
                           className="w-10 h-10 rounded-full hidden sm:block"
                         />
@@ -103,45 +94,41 @@ export const AllUsersTable: React.FC<AllUsersTableProps> = ({
 
                     <td className={` hidden md:table-cell ${tableDesign.td} `}>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium hidden md:block ${getTypeColor(
-                          user.type,
+                        className={`px-3 py-1 w-fit mx-auto rounded-full text-xs font-medium hidden md:block ${getTypeColor(
+                          user.role,
                         )}`}
                       >
-                        {user.type}
+                        {user.role}
                       </span>
                     </td>
 
                     <td className={` hidden sm:table-cell ${tableDesign.td} `}>
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                          user.status,
+                          user.isActive ? "Active" : "Inactive",
                         )}`}
                       >
-                        {user.status}
+                        {user.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
 
                     <td className={` ${tableDesign.td} `}>
                       <span
-                        className={`text-sm flex items-center gap-1 ${
-                          user.subscription === "Premium"
-                            ? "text-orange-600"
-                            : "text-blue-600"
+                        className={`text-sm flex items-center justify-center gap-1 ${
+                          user.isPremium ? "text-orange-600" : "text-blue-600"
                         }`}
                       >
-                        {user.subscription === "Premium" && (
-                          <Crown className="w-4 h-4" />
-                        )}
-                        {user.subscription}
+                        {user.isPremium && <Crown className="w-4 h-4" />}
+                        {user.isPremium ? "Premium" : "Free"}
                       </span>
                     </td>
 
                     <td className={` ${tableDesign.td} hidden lg:table-cell `}>
-                      {user.registration}
+                      {formatDate(user.createdAt)}
                     </td>
 
                     <td className={` ${tableDesign.td} hidden lg:table-cell  `}>
-                      {user.lastLogin}
+                      {formatDate(user.lastLoginAt)}
                     </td>
 
                     <td className={` ${tableDesign.td} `}>

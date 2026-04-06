@@ -12,6 +12,7 @@ interface ProgramCardProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   iconAction?: () => void;
+  isLoading?: boolean;
 }
 
 const ProgramCard: React.FC<ProgramCardProps> = ({
@@ -23,6 +24,7 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
   iconAction,
   onEdit,
   onDelete,
+  isLoading,
 }) => {
   const getCategoryStyles = () => {
     switch (category) {
@@ -79,7 +81,11 @@ const ProgramCard: React.FC<ProgramCardProps> = ({
             </ActionButton>
           )}
           {onDelete && (
-            <ActionButton variant="delete" onClick={() => onDelete(id)}>
+            <ActionButton
+              isDelete={isLoading}
+              variant="delete"
+              onClick={() => onDelete(id)}
+            >
               <Trash2 size={16} />
             </ActionButton>
           )}
